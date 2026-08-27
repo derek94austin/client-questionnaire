@@ -1,0 +1,2400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Client Questionnaire — Schumacher Lane, PLLC</title>
+<style>
+:root{
+  --navy:#12233d; --navy-2:#1c3557; --navy-3:#2a4a76;
+  --gold:#b3892f; --gold-lt:#d9b45f;
+  --ink:#16202e; --ink-2:#41505f; --ink-3:#6b7a8b;
+  --line:#d8dee6; --line-2:#e9edf2;
+  --bg:#eef1f5; --panel:#ffffff; --panel-2:#f7f9fb;
+  --ok:#1c7a4d; --ok-bg:#e7f4ed;
+  --warn:#9a6a06; --warn-bg:#fdf5e3;
+  --err:#a32323; --err-bg:#fbecec;
+  --r:8px; --sh:0 1px 2px rgba(16,32,56,.06),0 4px 14px rgba(16,32,56,.06);
+  --fs:15px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:var(--fs); line-height:1.5; color:var(--ink); background:var(--bg);
+  -webkit-text-size-adjust:100%;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--navy-3)}
+
+/* ---------- App shell ---------- */
+#app{display:flex;flex-direction:column;min-height:100vh}
+
+header.top{
+  background:var(--navy); color:#fff; position:sticky; top:0; z-index:50;
+  box-shadow:0 2px 10px rgba(10,20,35,.28);
+}
+.top-in{max-width:1400px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;line-height:1.15;margin-right:auto;min-width:0}
+.brand .firm{font-size:17px;font-weight:700;letter-spacing:.02em;font-variant:small-caps}
+.brand .sub{font-size:11px;color:#9fb2cc;letter-spacing:.06em;text-transform:uppercase}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{
+  border:1px solid transparent;border-radius:6px;padding:8px 14px;font-size:13.5px;font-weight:600;
+  cursor:pointer;background:#fff;color:var(--navy);white-space:nowrap;transition:.12s;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn.ghost{background:rgba(255,255,255,.09);color:#fff;border-color:rgba(255,255,255,.28)}
+.btn.ghost:hover{background:rgba(255,255,255,.18)}
+.btn.gold{background:var(--gold);color:#231a05;border-color:var(--gold)}
+.btn.gold:hover{background:var(--gold-lt)}
+.btn.sm{padding:5px 10px;font-size:12.5px}
+.btn.danger{background:#fff;color:var(--err);border-color:#e3bcbc}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+.savebar{background:var(--navy-2);color:#cfe0f5;font-size:12.5px}
+.savebar-in{max-width:1400px;margin:0 auto;padding:6px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.savebar b{color:#fff}
+.dot{width:8px;height:8px;border-radius:50%;background:#7f8fa5;display:inline-block;margin-right:6px}
+.dot.unsaved{background:var(--gold-lt);box-shadow:0 0 0 3px rgba(217,180,95,.2)}
+.dot.saved{background:#5fd39b}
+
+/* ---------- opt-in browser autosave ---------- */
+.autosave-ctl{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap}
+.as-toggle{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none;
+  border:1px solid rgba(255,255,255,.28);border-radius:5px;padding:3px 9px;background:rgba(255,255,255,.06)}
+.as-toggle:hover{background:rgba(255,255,255,.14)}
+.as-toggle input{accent-color:var(--gold-lt);width:14px;height:14px;margin:0}
+.btn.as-clear{background:rgba(255,255,255,.09);color:#fff;border-color:rgba(255,255,255,.28);padding:3px 9px;font-size:12px}
+.btn.as-clear:hover{background:rgba(255,255,255,.18)}
+.as-stamp{color:#9fb2cc;font-size:12px}
+
+.restore-bar{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  background:#fff;border:1px solid var(--gold);border-left:4px solid var(--gold);
+  border-radius:var(--r);padding:12px 16px;margin-bottom:14px;box-shadow:var(--sh);font-size:13.5px;
+}
+.restore-bar .rb-btns{display:flex;gap:8px;margin-left:auto}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1400px;margin:0 auto;padding:20px 18px 120px;display:grid;grid-template-columns:270px 1fr;gap:24px;width:100%}
+
+/* ---------- Sidebar ---------- */
+nav.side{position:sticky;top:96px;align-self:start;max-height:calc(100vh - 120px);overflow:auto}
+.side-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.side-head{padding:12px 14px;border-bottom:1px solid var(--line-2);background:var(--panel-2)}
+.side-head .pct{font-size:22px;font-weight:700;color:var(--navy)}
+.side-head .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3)}
+.bar{height:6px;background:var(--line-2);border-radius:99px;overflow:hidden;margin-top:8px}
+.bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--navy-3),var(--gold));width:0;transition:width .3s}
+ol.steps{list-style:none;margin:0;padding:6px}
+ol.steps li{margin:0}
+ol.steps button{
+  width:100%;text-align:left;background:none;border:0;border-radius:6px;padding:8px 10px;cursor:pointer;
+  display:flex;gap:9px;align-items:flex-start;font-size:13.5px;color:var(--ink-2);line-height:1.3;
+}
+ol.steps button:hover{background:var(--panel-2)}
+ol.steps button.active{background:var(--navy);color:#fff;font-weight:600}
+ol.steps button.active .num{background:rgba(255,255,255,.22);color:#fff;border-color:transparent}
+.num{
+  flex:0 0 auto;width:21px;height:21px;border-radius:5px;border:1px solid var(--line);
+  display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--ink-3);background:#fff;margin-top:1px;
+}
+ol.steps button.done .num{background:var(--ok-bg);color:var(--ok);border-color:#bfe0cf}
+ol.steps button.done.active .num{background:rgba(255,255,255,.22);color:#fff}
+.side-foot{padding:10px 14px;border-top:1px solid var(--line-2);font-size:12px;color:var(--ink-3)}
+
+.mobnav{display:none}
+
+/* ---------- Main ---------- */
+main.main{min-width:0}
+.step-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.step-head{padding:18px 22px;border-bottom:2px solid var(--navy);background:linear-gradient(180deg,#fff,var(--panel-2))}
+.step-head .eyebrow{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.step-head h1{margin:3px 0 0;font-size:23px;letter-spacing:-.01em;color:var(--navy)}
+.step-head p{margin:7px 0 0;color:var(--ink-2);font-size:14px;max-width:70ch}
+.step-body{padding:20px 22px}
+
+/* ---------- Sections & fields ---------- */
+.sec{margin:0 0 26px}
+.sec:last-child{margin-bottom:6px}
+.sec-h{
+  display:flex;align-items:center;gap:10px;margin:0 0 4px;
+  font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--navy);
+}
+.sec-h::after{content:"";flex:1;height:1px;background:var(--line)}
+.sec-h .idx{
+  background:var(--navy);color:#fff;border-radius:5px;min-width:22px;height:20px;padding:0 5px;
+  display:grid;place-items:center;font-size:11px;letter-spacing:0;
+}
+.sec-note{font-size:13px;color:var(--ink-2);margin:6px 0 12px;max-width:78ch}
+.sec-body{margin-top:12px}
+
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px 14px}
+.f{display:flex;flex-direction:column;gap:5px;min-width:0}
+.f > label,.f > .lbl{font-size:12px;font-weight:600;color:var(--ink-2);letter-spacing:.02em;line-height:1.3}
+.f .hint{font-size:11.5px;color:var(--ink-3);font-weight:400}
+.f input[type=text],.f input[type=tel],.f input[type=email],.f input[type=date],.f input[type=number],.f select,.f textarea{
+  width:100%;border:1px solid var(--line);border-radius:6px;padding:9px 10px;background:#fff;
+  font-size:14.5px;transition:.12s;min-height:38px;
+}
+.f textarea{min-height:70px;resize:vertical;line-height:1.45}
+.f input:focus,.f select:focus,.f textarea:focus{
+  outline:none;border-color:var(--navy-3);box-shadow:0 0 0 3px rgba(42,74,118,.13)
+}
+.f input::placeholder{color:#a9b4c1}
+.money-wrap{position:relative}
+.money-wrap::before{content:"$";position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink-3);font-size:14px}
+.money-wrap input{padding-left:22px !important;text-align:right}
+.suffix-wrap{position:relative}
+.suffix-wrap > .sfx{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--ink-3);font-size:12px;pointer-events:none}
+.suffix-wrap input{padding-right:44px !important}
+
+/* choice controls */
+.choice{display:flex;flex-wrap:wrap;gap:7px}
+.choice label{
+  display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:6px;
+  padding:7px 12px;cursor:pointer;background:#fff;font-size:13.5px;transition:.12s;user-select:none;
+}
+.choice label:hover{border-color:var(--navy-3);background:var(--panel-2)}
+.choice input{accent-color:var(--navy);margin:0;width:15px;height:15px}
+.choice label.on{border-color:var(--navy);background:#eef3fa;font-weight:600;color:var(--navy)}
+.choice.yn label{min-width:74px;justify-content:center}
+.choice.cols3{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+.choice.cols2{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+
+.cbline{display:flex;align-items:flex-start;gap:9px;padding:7px 0}
+.cbline input{margin-top:3px;accent-color:var(--navy);width:16px;height:16px;flex:0 0 auto}
+.cbline label{font-size:14px;line-height:1.45;cursor:pointer}
+
+.none-toggle{
+  display:inline-flex;align-items:center;gap:8px;border:1px dashed var(--line);border-radius:6px;
+  padding:7px 13px;cursor:pointer;background:var(--panel-2);font-size:13px;color:var(--ink-2);user-select:none;
+}
+.none-toggle input{accent-color:var(--navy);width:15px;height:15px;margin:0}
+.none-toggle.on{background:#eef3fa;border:1px solid var(--navy);color:var(--navy);font-weight:600}
+
+/* dual (debtor / spouse) */
+.dual{display:grid;grid-template-columns:minmax(180px,1.4fr) 1fr 1fr;gap:10px;align-items:center;
+  padding:6px 8px;border-radius:6px}
+.dual:nth-of-type(odd){background:var(--panel-2)}
+.dual > .dl{font-size:13.5px;color:var(--ink);line-height:1.3}
+.dual > .dl small{display:block;color:var(--ink-3);font-size:11.5px}
+.dualhead{display:grid;grid-template-columns:minmax(180px,1.4fr) 1fr 1fr;gap:10px;padding:0 8px 6px;
+  font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:700;
+  border-bottom:1px solid var(--line);margin-bottom:6px;position:sticky;top:88px;background:#fff;z-index:5}
+.dualhead > :first-child{visibility:hidden}
+.dual input,.dual select{width:100%;border:1px solid var(--line);border-radius:6px;padding:7px 9px;font-size:14px;min-height:34px}
+.dual input:focus,.dual select:focus{outline:none;border-color:var(--navy-3);box-shadow:0 0 0 3px rgba(42,74,118,.13)}
+.dual .money-wrap input{text-align:right}
+.dual-total{display:grid;grid-template-columns:minmax(180px,1.4fr) 1fr 1fr;gap:10px;padding:10px 8px;margin-top:8px;
+  border-top:2px solid var(--navy);font-weight:700;align-items:center}
+.dual-total .tv{text-align:right;padding-right:10px;font-variant-numeric:tabular-nums;color:var(--navy);font-size:16px}
+
+/* repeaters */
+.rep-item{border:1px solid var(--line);border-radius:var(--r);margin:0 0 12px;background:#fff;overflow:hidden}
+.rep-head{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--panel-2);border-bottom:1px solid var(--line-2)}
+.rep-head .rt{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--navy)}
+.rep-head .rs{font-size:12.5px;color:var(--ink-3);margin-right:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rep-body{padding:14px}
+.rep-add{display:flex;gap:10px;align-items:center;margin-top:2px}
+.rep-empty{color:var(--ink-3);font-size:13px;font-style:italic;padding:8px 0}
+
+/* sub-block inside repeater / nested */
+.block{border:1px solid var(--line-2);border-left:3px solid var(--navy-3);border-radius:6px;padding:12px;margin:12px 0;background:var(--panel-2)}
+.block > .bt{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--navy-3);margin-bottom:10px}
+
+/* checklist-with-value rows (household goods) */
+.hg{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:4px 18px}
+.hg-row{display:grid;grid-template-columns:18px 1fr 84px 96px;gap:8px;align-items:center;padding:4px 6px;border-radius:5px}
+.hg-row:hover{background:var(--panel-2)}
+.hg-row input[type=checkbox]{accent-color:var(--navy);width:16px;height:16px;margin:0}
+.hg-row .hl{font-size:13.5px;line-height:1.25}
+.hg-row input[type=text]{border:1px solid var(--line);border-radius:5px;padding:5px 7px;font-size:13px;min-height:30px;width:100%}
+.hg-row .money-wrap::before{font-size:12.5px;left:7px}
+.hg-row .money-wrap input{padding-left:17px !important}
+
+/* means-test / matrix grid */
+.mtx-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
+table.mtx{border-collapse:collapse;width:100%;min-width:680px;font-size:13px}
+table.mtx th,table.mtx td{border:1px solid var(--line-2);padding:0}
+table.mtx th{background:var(--panel-2);color:var(--ink-2);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:7px 8px;font-weight:700;text-align:center}
+table.mtx th.rh{text-align:left;min-width:96px}
+table.mtx td.rh{background:var(--panel-2);font-weight:600;padding:7px 8px;font-size:12.5px;white-space:nowrap}
+table.mtx input{border:0;width:100%;padding:8px 8px;text-align:right;font-size:13.5px;min-height:36px;background:transparent}
+table.mtx input:focus{outline:2px solid var(--navy-3);outline-offset:-2px;background:#fff;border-radius:3px}
+table.mtx td.tot{background:#f2f6fb;text-align:right;padding:7px 9px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+
+/* callouts */
+.callout{border-radius:var(--r);padding:13px 15px;font-size:13.5px;line-height:1.55;margin:0 0 16px;border:1px solid}
+.callout.info{background:#eef3fa;border-color:#c9d9ee;color:#1b3454}
+.callout.warn{background:var(--warn-bg);border-color:#e8d5a4;color:#6b4b06}
+.callout.priv{background:var(--ok-bg);border-color:#bfe0cf;color:#12563a}
+.callout b{font-weight:700}
+.callout ul{margin:7px 0 0;padding-left:20px}
+.callout li{margin:3px 0}
+
+.total-strip{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  background:var(--navy);color:#fff;border-radius:var(--r);padding:12px 16px;margin-top:14px
+}
+.total-strip .tl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#a9c0dd}
+.total-strip .tv{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+
+.subtotal{display:flex;justify-content:flex-end;align-items:baseline;gap:12px;margin-top:10px;
+  border-top:1px solid var(--line);padding-top:9px}
+.subtotal .sl{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:700}
+.subtotal .sv{font-size:17px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+
+/* footer nav */
+.stepnav{display:flex;gap:10px;align-items:center;padding:16px 22px;border-top:1px solid var(--line-2);background:var(--panel-2);flex-wrap:wrap}
+.stepnav .spacer{flex:1}
+.btn.nav{background:var(--navy);color:#fff;padding:11px 22px;font-size:14.5px}
+.btn.nav:hover{background:var(--navy-2)}
+.btn.nav.back{background:#fff;color:var(--navy);border-color:var(--line)}
+
+.attorney-only{display:none}
+body.attorney .attorney-only{display:block}
+.att-badge{display:inline-block;background:var(--warn-bg);color:var(--warn);border:1px solid #e8d5a4;
+  border-radius:4px;padding:2px 7px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-left:8px}
+
+.hidden{display:none !important}
+
+/* signature */
+.sigbox{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--panel-2)}
+.sigline input{font-family:"Segoe Script","Brush Script MT",cursive;font-size:22px !important;letter-spacing:.02em}
+
+/* review / print */
+#review .rv-sec{margin-bottom:18px}
+#review h2{font-size:15px;color:var(--navy);border-bottom:2px solid var(--navy);padding-bottom:5px;margin:22px 0 10px;
+  text-transform:uppercase;letter-spacing:.05em}
+#review h3{font-size:13px;color:var(--navy-3);margin:14px 0 6px;letter-spacing:.03em}
+#review table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:8px}
+#review td{border-bottom:1px solid var(--line-2);padding:5px 8px;vertical-align:top}
+#review td.k{width:44%;color:var(--ink-2);font-weight:600}
+#review td.v{color:var(--ink)}
+#review td.v.empty{color:#b4bdc7;font-style:italic}
+.rv-print-head{display:none}
+
+@media (max-width:1080px){
+  .wrap{grid-template-columns:1fr;padding:14px 12px 110px;gap:14px}
+  nav.side{display:none}
+  .mobnav{display:block}
+  .mobnav select{width:100%;padding:11px;border:1px solid var(--line);border-radius:var(--r);background:#fff;font-size:14.5px;font-weight:600;color:var(--navy)}
+  .dualhead{top:0}
+  .step-body{padding:16px 14px}
+  .step-head{padding:16px 14px}
+  .stepnav{padding:14px}
+  .dual,.dualhead,.dual-total{grid-template-columns:1fr;gap:6px}
+  .dualhead{display:none}
+  .dual{border:1px solid var(--line-2);margin-bottom:8px;padding:10px}
+  .dual > .dl{font-weight:600}
+  .dual .dcell::before{content:attr(data-who);display:block;font-size:10.5px;text-transform:uppercase;
+    letter-spacing:.07em;color:var(--ink-3);font-weight:700;margin-bottom:3px}
+  .dual-total{grid-template-columns:1fr}
+  .hg-row{grid-template-columns:18px 1fr 78px 90px}
+}
+@media (max-width:560px){
+  .top-in{padding:9px 12px}
+  .brand .firm{font-size:15px}
+  .btn{padding:7px 11px;font-size:12.5px}
+  .hg{grid-template-columns:1fr}
+}
+
+@media print{
+  body{background:#fff;font-size:10.5pt}
+  header.top,.savebar,nav.side,.mobnav,.stepnav,.no-print,.step-head{display:none !important}
+  .wrap{display:block;padding:0;max-width:none}
+  .step-card{border:0;box-shadow:none}
+  .step-body{padding:0}
+  .rv-print-head{display:block;text-align:center;margin-bottom:14px;border-bottom:2px solid #000;padding-bottom:8px}
+  .rv-print-head .f1{font-size:16pt;font-weight:700;font-variant:small-caps}
+  .rv-print-head .f2{font-size:9pt}
+  #review h2,#review h3{page-break-after:avoid;break-after:avoid}
+  #review .rv-sec{break-inside:auto}
+  #review table{page-break-inside:auto}
+  #review tr{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="top-in">
+      <div class="brand">
+        <span class="firm" id="brandFirm">Schumacher Lane, PLLC</span>
+        <span class="sub" id="brandSub">Client Questionnaire</span>
+      </div>
+      <div class="top-actions">
+        <button class="btn ghost sm" id="btnLoad">Open saved file</button>
+        <button class="btn ghost sm" id="btnPrint">Print / PDF</button>
+        <button class="btn gold" id="btnSave">Save my answers</button>
+        <input type="file" id="fileIn" accept=".json,.slq,application/json" style="display:none">
+      </div>
+    </div>
+  </header>
+  <div class="savebar">
+    <div class="savebar-in">
+      <span><span class="dot" id="saveDot"></span><span id="saveMsg">Nothing entered yet</span></span>
+      <span id="clientTag"></span>
+      <span style="margin-left:auto" class="no-print">Your answers stay on this device until you save a file and send it to us.</span>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <nav class="side">
+      <div class="side-card">
+        <div class="side-head">
+          <div class="lbl">Completed</div>
+          <div class="pct" id="pctNum">0%</div>
+          <div class="bar"><i id="pctBar"></i></div>
+        </div>
+        <ol class="steps" id="stepList"></ol>
+        <div class="side-foot">
+          Questions? Call <b>503-482-8137</b><br>kyle@schumacherlane.com
+        </div>
+      </div>
+    </nav>
+
+    <main class="main">
+      <div class="mobnav no-print" style="margin-bottom:12px">
+        <select id="mobSelect"></select>
+      </div>
+      <div class="step-card">
+        <div class="step-head" id="stepHead"></div>
+        <div class="step-body" id="stepBody"></div>
+        <div class="stepnav no-print">
+          <button class="btn nav back" id="btnBack">&larr; Back</button>
+          <div class="spacer"></div>
+          <button class="btn sm" id="btnSave2">Save progress</button>
+          <button class="btn nav" id="btnNext">Next &rarr;</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script>
+/* ============================================================
+   Schumacher Lane, PLLC — Client Questionnaire
+   Self-contained. No network calls. No data leaves this device.
+   ============================================================ */
+"use strict";
+
+/* ---------- build flags (rewritten by the build script) ---------- */
+const BUILD = { attorneyMode:false, autosave:true, label:'client' };
+
+/* ---------- schema shorthand ---------- */
+const T   = (id,l,w,o)      => ({t:'text', id,l, w:w||4, ...o});
+const TEL = (id,l,w,o)      => ({t:'tel',  id,l, w:w||3, ...o});
+const EM  = (id,l,w,o)      => ({t:'email',id,l, w:w||4, ...o});
+const NUM = (id,l,w,o)      => ({t:'num',  id,l, w:w||2, ...o});
+const M   = (id,l,w,o)      => ({t:'money',id,l, w:w||3, ...o});
+const D   = (id,l,w,o)      => ({t:'date', id,l, w:w||3, ...o});
+const TA  = (id,l,w,o)      => ({t:'ta',   id,l, w:w||12,...o});
+const YN  = (id,l,w,o)      => ({t:'yn',   id,l, w:w||6, ...o});
+const SEL = (id,l,opts,w,o) => ({t:'sel',  id,l, opts, w:w||4, ...o});
+const RAD = (id,l,opts,w,o) => ({t:'rad',  id,l, opts, w:w||12,...o});
+const CKS = (id,l,opts,w,o) => ({t:'cks',  id,l, opts, w:w||12,...o});
+const CK  = (id,l,w,o)      => ({t:'ck',   id,l, w:w||12,...o});
+const H   = (l,o)           => ({t:'h', l, ...o});
+const NOTE= (l,k)           => ({t:'note', l, k:k||'info'});
+const PCT = (id,l,w,o)      => ({t:'text', id,l, w:w||2, sfx:'%', ...o});
+const MO  = (id,l,w,o)      => ({t:'money',id,l, w:w||3, sfx:'/mo', ...o});
+
+const US_STATES = ["AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"];
+const ST  = (id,l,w,o)      => ({t:'sel', id, l:l||'State', opts:US_STATES, w:w||2, ...o});
+
+/* address cluster: prefix -> Addr / City / State / Zip */
+const ADDR = (p,lbl) => ([
+  T(p+'Addr', (lbl||'')+'Street Address', 6),
+  T(p+'City','City',3), ST(p+'State','State',1), T(p+'Zip','ZIP',2)
+]);
+
+/* a full secured-lien block (mortgages, mobile-home loans) */
+const LIEN = (p,title) => ({t:'block', l:title, fields:[
+  T(p+'Name','Lender / Mortgage Name',6), T(p+'Acct','Account Number',6),
+  ...ADDR(p+'','Lender Mailing Address'),
+  T(p+'Obtained','Date Obtained (mm/yyyy)',3), M(p+'Payoff','Payoff Amount',3),
+  MO(p+'Pmt','Monthly Payment',3), PCT(p+'Rate','Interest Rate',3),
+  YN(p+'TaxInc','Are property TAXES included in the payment?',6,{rerender:true}),
+  M(p+'TaxAmt','If no — taxes per year',6,{sfx:'/yr', showIf:(d,it)=>it[p+'TaxInc']==='No'}),
+  YN(p+'InsInc','Is INSURANCE included in the payment?',6,{rerender:true}),
+  M(p+'InsAmt','If no — insurance per year',6,{sfx:'/yr', showIf:(d,it)=>it[p+'InsInc']==='No'}),
+  RAD(p+'Intent','What do you intend to do with this property?',['Keep','Surrender'],6),
+  YN(p+'Behind','Are you behind on payments?',6,{rerender:true}),
+  NUM(p+'BehindNo','If behind — number of payments behind',3,{showIf:(d,it)=>it[p+'Behind']==='Yes'}),
+  M(p+'Catchup','Amount needed to catch up',3,{showIf:(d,it)=>it[p+'Behind']==='Yes'}),
+  YN(p+'Foreclosed','Has a foreclosure been filed?',6)
+]});
+
+/* value-checklist row set for household goods */
+const HGITEM = (id,label,extra) => ({id,label,extra:extra||null});
+/* ============================================================
+   SCHEMA — Part A : intro, filers, real property, mobile home
+   ============================================================ */
+
+const PERSON = (p, who, isJoint) => ([
+  T(p+'First','First Name',4), T(p+'Middle','Middle Name',4), T(p+'Last','Last Name',4),
+  SEL(p+'Suffix','Suffix',['','Jr.','Sr.','II','III','IV'],2),
+  T(p+'OtherNames','Other names used within the last 8 years',10,
+    {hint:'Maiden names, married names, nicknames used on accounts, DBAs. Write "None" if none.'}),
+  T(p+'SSN','Social Security Number',4,{hint:'List all if you have more than one.'}),
+  H('Where '+(isJoint?'they live':'you live')),
+  T(p+'Addr','Street Address',7), T(p+'Apt','Apt. No.',2), T(p+'City','City',3),
+  ST(p+'State','State',2), T(p+'Zip','ZIP Code',2),
+  T(p+'County','County of Residence',4,{hint:'County, not city.'}),
+  T(p+'Tenure','Length of time at current address',4),
+  YN(p+'MailDiff','Is the mailing address different from the street address?',12,{rerender:true}),
+  T(p+'MailAddr','Mailing Address',7,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
+  T(p+'MailApt','Apt. No.',2,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
+  T(p+'MailCity','City',3,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
+  ST(p+'MailState','State',2,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
+  T(p+'MailZip','ZIP Code',2,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
+  H('How to reach '+(isJoint?'them':'you')),
+  TEL(p+'Home','Home Telephone',3), TEL(p+'Work','Work Telephone',3),
+  TEL(p+'Cell','Cellular Telephone',3), EM(p+'Email','E-mail Address',3),
+  RAD(p+'BestNum','Best number to contact',['Home','Work','Cellular'],6),
+  T(p+'BestTime','Best time to contact',3,{hint:'e.g. 9:00 AM – noon'}),
+  YN(p+'EmailOK','Can you receive communications by e-mail?',6),
+  H('Background'),
+  D(p+'DOB','Date of Birth',3),
+  RAD(p+'Marital','Marital Status',['Single','Married','Separated','Divorced','Widowed'],9),
+  YN(p+'PriorBK','Have you ever filed for bankruptcy before?',6,{rerender:true}),
+  T(p+'PriorBKWhen','If yes — when?',3,{showIf:(d,it)=>it[p+'PriorBK']==='Yes'}),
+  SEL(p+'PriorBKCh','Which chapter?',['','Chapter 7','Chapter 11','Chapter 12','Chapter 13'],3,
+    {showIf:(d,it)=>it[p+'PriorBK']==='Yes'}),
+  YN(p+'Same180','Have you resided in the same county for the last 180 days (6 months)?',7,{rerender:true}),
+  T(p+'PriorCounty','If no — where did you live prior?',5,{showIf:(d,it)=>it[p+'Same180']==='No'})
+]);
+
+const STEPS = [];
+
+/* ---------- 1. Start here ---------- */
+STEPS.push({
+  id:'start', title:'Start Here', eyebrow:'Before you begin',
+  intro:'This questionnaire replaces the paper packet. Take your time — you can stop at any point, save your answers to a file, and pick up where you left off.',
+  sections:[
+    {title:'How this works', fields:[
+      NOTE('<b>Your answers never leave this device.</b> Nothing is uploaded or transmitted while you type. When you are finished, press <b>Save my answers</b> — that downloads a single file to your computer, which you then send to our office. You can reopen that file here at any time to correct or add to your answers.','priv'),
+      NOTE('<b>Federal law requires that everything in your petition be complete, accurate and truthful.</b> You must list <i>all</i> assets — everything in your possession. Even if you still owe money on something, the property is still yours and its value must be disclosed. When listing the value of personal property, give the <b>“yard sale” value</b> — what it would sell for used, not what it would cost to replace.','warn'),
+      NOTE('<b>Do not leave blanks.</b> If a question does not apply to you, check the <b>“None”</b> box or write “N/A”. Blank answers slow your case down more than anything else.','info'),
+      H('About your debts'),
+      NOTE('We pull a credit report from all three bureaus to help capture your creditors. Credit reports frequently contain errors, and some debts are never reported at all — so we still need <b>your</b> complete list of everyone you may owe money to. Include the original creditor <i>and</i> any collection agency assigned to the account. Estimate balances as closely as you can, provide the date the debt was incurred and what it was for, and do not omit any bills. If you have been sued, send us a copy of the lawsuit. Tell us about any debt you are interested in paying after bankruptcy.','info')
+    ]},
+    {title:'Who is filing', fields:[
+      RAD('filingType','Are you filing alone, or jointly with a spouse?',
+        ['Filing alone (individual)','Filing jointly with my spouse'],12,{rerender:true}),
+      T('clientName','Your full name (as it will appear on the petition)',6),
+      D('formDate','Today’s date',3)
+    ]}
+  ]
+});
+
+/* ---------- 2. Debtor ---------- */
+STEPS.push({
+  id:'debtor', title:'Your Information', eyebrow:'Debtor',
+  intro:'Tell us about yourself. If you are filing jointly, your spouse gets their own page next.',
+  sections:[{title:'Debtor', fields: PERSON('d_','you',false)}]
+});
+
+/* ---------- 3. Joint debtor ---------- */
+STEPS.push({
+  id:'joint', title:'Your Spouse’s Information', eyebrow:'Joint Debtor',
+  intro:'These questions cover the spouse who is filing jointly with you.',
+  showIf: d => d.filingType === 'Filing jointly with my spouse',
+  sections:[{title:'Joint Debtor', fields: PERSON('j_','your spouse',true)}]
+});
+
+/* ---------- 4. Real property ---------- */
+STEPS.push({
+  id:'realprop', title:'Your Real Property', eyebrow:'Assets',
+  intro:'Houses, duplexes, townhomes, condos, co-ops, timeshares, vacant land and farm land — anything you own an interest in.',
+  sections:[
+    {title:'Threshold questions', fields:[
+      YN('ownsRealProp','Do you own any real property (house, duplex, townhome, condo, co-operative, etc.)?',12,{rerender:true}),
+      YN('doYouRent','Do you rent?',6,{rerender:true,hint:'If yes, skip ahead — we will cover your lease under “Leases & Contracts”.'}),
+      YN('ownsMobile','Do you own a mobile home?',6,{rerender:true,hint:'If yes, the mobile home page is next.'})
+    ]},
+    {title:'Property details', showIf:d=>d.ownsRealProp==='Yes', fields:[
+      {t:'rep', id:'realProps', l:'Property', min:1, addLabel:'Add another property',
+       summary:it=>it.rpAddr||'', fields:[
+        RAD('rpType','Type of real property',
+          ['Single family home','Townhome / duplex','Multi-family home','Condominium','Co-operative','Timeshare','Vacant land','Farm land'],12),
+        TA('rpDesc','Description of property',12,
+          {hint:'Example: 1,950 square foot, 3 bedroom, 2½ bath, split level, 2 car attached garage on 1 acre lot.'}),
+        T('rpAddr','Address of Property',6), T('rpCity','City',3), ST('rpState','State',1), T('rpZip','ZIP',2),
+        M('rpFMV','Estimated Fair Market Value',3),
+        NUM('rpTitleCount','# of people on title',2),
+        T('rpTitleNames','Names of individuals on title',5),
+        YN('rpLiveHere','Do you currently live here?',6),
+        T('rpPurchased','Month & year property purchased',3),
+        LIEN('rpM1_','1st Mortgage'),
+        YN('rpHas2','Is there a 2nd mortgage or equity line on this property?',6,{rerender:true}),
+        {...LIEN('rpM2_','2nd Mortgage / Equity Line'), showIf:(d,it)=>it.rpHas2==='Yes'},
+        YN('rpHas3','Is there a 3rd mortgage or any other lien on this property?',6,{rerender:true}),
+        {...LIEN('rpM3_','3rd Mortgage / Lien'), showIf:(d,it)=>it.rpHas3==='Yes'}
+      ]}
+    ]}
+  ]
+});
+
+/* ---------- 5. Mobile home ---------- */
+STEPS.push({
+  id:'mobile', title:'Your Mobile Home', eyebrow:'Assets',
+  showIf: d => d.ownsMobile === 'Yes',
+  intro:'Describe the mobile home and any loan against it.',
+  sections:[
+    {title:'Mobile home', fields:[
+      TA('mhDesc','Description of mobile home',12,
+        {hint:'Example: 28x40 doublewide, 2 bedroom, 1 bath, on wheels with skirting and steps and 1 outbuilding shed situated in mobile home park.'}),
+      T('mhTitleNames','Names on title or deed',6),
+      T('mhAddr','Address',6), T('mhCity','City',4), ST('mhState','State',2), T('mhZip','ZIP',2),
+      M('mhValue','Estimated Value',3),
+      YN('mhWheels','Have the wheels been removed?',5),
+      YN('mhPark','Is it in a mobile home park?',4),
+      M('mhLotRent','Lot rent',3,{showIf:d=>d.mhPark==='Yes'}),
+      YN('mhAttached','Is it attached to land you own?',6),
+      YN('mhGroundPmt','Do you make separate payments for the ground your home sits on?',6),
+      T('mhGroundExplain','If yes, explain',12,{showIf:d=>d.mhGroundPmt==='Yes'}),
+      LIEN('mhL_','Mobile Home Mortgage / Loan')
+    ]}
+  ]
+});
+/* ============================================================
+   SCHEMA — Part B : personal property, items 1–35
+   ============================================================ */
+
+const HG_ITEMS = [
+  ['sofa','Sofa(s)','qty'], ['loveseat','Loveseat(s)','qty'],
+  ['tv1','Television 1','desc'], ['tv2','Television 2','desc'],
+  ['tv3','Television 3','desc'], ['tv4','Television 4','desc'],
+  ['entctr','Entertainment center / TV cabinet',null],
+  ['dvd','DVD player','qty'], ['vhs','VHS player',null],
+  ['pc','Personal computer / printer',null], ['stereo','Stereo',null],
+  ['games','Video game system',null], ['coffeetbl','Coffee table',null],
+  ['endtbl','End tables',null], ['sofatbl','Sofa tables',null],
+  ['kitchtbl','Kitchen table / chairs',null], ['dinetbl','Dining table / chairs',null],
+  ['chinacab','China cabinet',null],
+  ['fridge','Refrigerator / freezer',null], ['freezer','Freezer',null],
+  ['stove','Stove / range',null], ['microwave','Microwave',null],
+  ['dishwasher','Dish washer',null], ['washer','Washing machine',null],
+  ['dryer','Clothes dryer',null], ['dishes','Dishes / flatware',null],
+  ['china','China / silverware',null], ['pots','Pots / pans / cookware',null],
+  ['bed','Bed','qty'], ['dresser','Dresser(s) / nightstand(s)',null],
+  ['lamps','Lamps / accessories',null], ['phone','Telephone',null],
+  ['cellphones','Cellular telephones',null], ['mower','Lawnmower',null],
+  ['yard','Yard / landscaping tools',null], ['hgother','Other','desc']
+];
+
+/* ---------- 6. Personal property 1–4 ---------- */
+STEPS.push({
+  id:'pp1', title:'Personal Property (1–4)', eyebrow:'Assets',
+  intro:'Cash, bank accounts, deposits and household goods. Use “yard sale” value — what an item would actually sell for used.',
+  sections:[
+    {idx:1, title:'Cash on hand', none:'pp1None', noneLabel:'None — I have no cash on hand',
+     note:'The amount of cash you physically possess (wallet, home, safe) — not money in a bank account.',
+     fields:[ M('pp1Cash','Amount of cash you possess',4) ], totalFn: d => num(d.pp1Cash)},
+
+    {idx:2, title:'Financial accounts', none:'pp2None', noneLabel:'None — I have no financial accounts',
+     note:'List ALL open financial accounts, including PayPal, Venmo, CashApp, Chime, Apple Cash and Google Pay.',
+     fields:[
+      {t:'rep', id:'accounts', l:'Account', min:1, addLabel:'Add another account',
+       summary:it=>[it.acBank,it.acNum].filter(Boolean).join(' · '), fields:[
+        RAD('acType','Type of account',['Savings / Money Market','Checking','CD','Other'],12),
+        T('acTypeOther','Other — describe',4,{showIf:(d,it)=>it.acType==='Other'}),
+        T('acBank','Name and address of bank',8), T('acNum','Account Number',4),
+        RAD('acOwner','Whose account is it?',['Individual','Spouse','Joint'],8),
+        M('acValue','Current balance',4)
+      ]}
+     ], totalFn: d => sumRep(d,'accounts','acValue')},
+
+    {idx:3, title:'Security deposits', none:'pp3None', noneLabel:'None — I hold no security deposits',
+     note:'All security deposits held by landlords, utility companies, telephone companies, etc.',
+     fields:[
+      {t:'rep', id:'deposits', l:'Deposit', min:1, addLabel:'Add another deposit',
+       summary:it=>it.depHolder||'', fields:[
+        T('depHolder','Landlord / utility / company holding the deposit',8),
+        M('depAmt','Amount of deposit',4)
+      ]}
+     ], totalFn: d => sumRep(d,'deposits','depAmt')},
+
+    {idx:4, title:'Household goods and furnishings', none:'pp4None',
+     noneLabel:'None — I own no household goods',
+     note:'Check each item you own and give a used garage-sale value. Do not list replacement cost.',
+     fields:[ {t:'hg', id:'hg', items:HG_ITEMS} ],
+     totalFn: d => sumHG(d)}
+  ]
+});
+
+/* ---------- 7. Personal property 5–17 ---------- */
+STEPS.push({
+  id:'pp2', title:'Personal Property (5–17)', eyebrow:'Assets',
+  intro:'Personal effects, insurance, retirement accounts and money owed to you.',
+  sections:[
+    {idx:5, title:'Books, pictures and other art objects', none:'pp5None', noneLabel:'None',
+     note:'All books, pictures, art objects, CDs, records, tapes, collectibles.',
+     fields:[
+      CKS('pp5Items','Check all that apply',
+        ['Books','Family pictures','Art objects','Compact discs','DVDs','Records','Tapes','Collectibles','Other'],12),
+      TA('pp5Desc','Describe and value the above',12)
+     ], totalId:'pp5Total'},
+
+    {idx:6, title:'Clothing / wearing apparel', none:'pp6None', noneLabel:'None',
+     note:'Include coats, shoes, hats, etc.',
+     fields:[
+      NUM('pp6Adults','Total number of adults',3), M('pp6AdultVal','Total yard sale value — adults',3),
+      NUM('pp6Kids','Total number of children',3), M('pp6KidVal','Total yard sale value — children',3)
+     ], totalFn: d => num(d.pp6AdultVal)+num(d.pp6KidVal)},
+
+    {idx:7, title:'Furs and jewelry', none:'pp7None', noneLabel:'None',
+     note:'Include wedding rings, costume jewelry and watches.',
+     fields:[
+      CKS('pp7Items','Check all that apply',
+        ['Wedding rings','Rings','Watches','Earrings','Necklaces','Bracelets','Pendants','Costume jewelry'],12),
+      TA('pp7Desc','Describe and indicate used value',12)
+     ], totalId:'pp7Total'},
+
+    {idx:8, title:'Firearms, sports, photographic and other hobby equipment',
+     none:'pp8None', noneLabel:'None',
+     fields:[
+      CKS('pp8Items','Check all that apply',['Firearms','Camera','Camcorder'],12),
+      T('pp8Other1','Other',4), T('pp8Other2','Other',4), T('pp8Other3','Other',4),
+      TA('pp8Desc','Describe and indicate used value',12)
+     ], totalId:'pp8Total'},
+
+    {idx:9, title:'Life insurance policies', none:'pp9None', noneLabel:'None',
+     note:'Provide the name of the insurance company and the cash surrender value, if any.',
+     fields:[
+      {t:'rep', id:'lifeIns', l:'Policy', min:1, addLabel:'Add another policy',
+       summary:it=>it.liCompany||'', fields:[
+        RAD('liType','Policy type',['Term','Whole / Universal'],6),
+        T('liCompany','Company',6), M('liCash','Cash value',4),
+        RAD('liInsures','Who does this policy insure?',['Husband','Spouse'],4),
+        T('liBenef','Beneficiaries',8)
+      ]}
+     ], totalFn: d => sumRep(d,'lifeIns','liCash')},
+
+    {idx:10, title:'Annuities', none:'pp10None', noneLabel:'None',
+     fields:[
+      {t:'rep', id:'annuities', l:'Annuity', min:1, addLabel:'Add another annuity',
+       summary:it=>it.anCompany||'', fields:[ T('anCompany','Issuer / company',8), M('anValue','Cash value',4) ]}
+     ], totalFn: d => sumRep(d,'annuities','anValue')},
+
+    {idx:11, title:'Interest in education IRA or state tuition plan', none:'pp11None', noneLabel:'None',
+     fields:[
+      {t:'rep', id:'eduPlans', l:'Plan', min:1, addLabel:'Add another plan',
+       summary:it=>it.edCompany||'', fields:[ T('edCompany','Company',8), M('edValue','Current value',4) ]}
+     ], totalFn: d => sumRep(d,'eduPlans','edValue')},
+
+    {idx:12, title:'Interest in pension, retirement or profit sharing plan',
+     none:'pp12None', noneLabel:'None',
+     note:'Include the type of plan, describe it, and provide the current balance.',
+     fields:[
+      {t:'rep', id:'retirement', l:'Plan', min:1, addLabel:'Add another plan',
+       summary:it=>[it.rtWhose,it.rtType].filter(Boolean).join(' · '), fields:[
+        RAD('rtWhose','Whose plan?',['Husband','Wife'],5),
+        RAD('rtType','Type',['IRA','401(k)','Pension','Other'],7),
+        T('rtDesc','Description',8), M('rtValue','Current value',4)
+      ]}
+     ], totalFn: d => sumRep(d,'retirement','rtValue')},
+
+    {idx:13, title:'Stocks and interest in businesses', none:'pp13None', noneLabel:'None',
+     fields:[
+      {t:'rep', id:'stocks', l:'Holding', min:1, addLabel:'Add another holding',
+       summary:it=>it.stCompany||'', fields:[
+        T('stCompany','Company',6), T('stShares','Number of shares',3), M('stValue','Cash value',3)
+      ]},
+      TA('pp13Other','Describe any other interest in any business',12)
+     ], totalFn: d => sumRep(d,'stocks','stValue')},
+
+    {idx:14, title:'Interest in partnerships or joint ventures', none:'pp14None', noneLabel:'None',
+     fields:[
+      YN('pp14Joint','Do you have ownership (joint interest) in any property with another person?',7),
+      T('pp14JointX','Explain',5,{showIf:d=>d.pp14Joint==='Yes'}),
+      YN('pp14TS','Do you own, or are you buying, a time-share in a vacation property / resort?',7),
+      T('pp14TSX','Explain',5,{showIf:d=>d.pp14TS==='Yes'})
+     ], totalId:'pp14Total'},
+
+    {idx:15, title:'Government or corporate bonds', none:'pp15None', noneLabel:'None',
+     fields:[
+      {t:'rep', id:'bonds', l:'Bond', min:1, addLabel:'Add another bond',
+       summary:it=>it.bdIssuer||'', fields:[ T('bdIssuer','Issuer',8), M('bdValue','Cash value',4) ]}
+     ], totalFn: d => sumRep(d,'bonds','bdValue')},
+
+    {idx:16, title:'Accounts receivable', none:'pp16None', noneLabel:'None',
+     note:'Money owed to you by customers or clients.',
+     fields:[ TA('pp16Desc','Describe',12), M('pp16Val','Cash value',4) ],
+     totalFn: d => num(d.pp16Val)},
+
+    {idx:17, title:'Alimony, maintenance, support and property settlements you are due',
+     none:'pp17None', noneLabel:'None',
+     note:'List everything you are entitled to receive.',
+     fields:[
+      T('pp17Payer','Name of ex-spouse / payer',6), T('pp17Addr','Address',6),
+      T('pp17City','City',4), ST('pp17State','State',2), T('pp17Zip','ZIP',2),
+      YN('pp17Order','Is there a court order?',6),
+      M('pp17Owed','Total amount owed to you',4), T('pp17Started','Date started',4),
+      T('pp17Filed','Where was the case filed?',6)
+     ], totalFn: d => num(d.pp17Owed)}
+  ]
+});
+
+/* ---------- 8. Personal property 18–24 ---------- */
+STEPS.push({
+  id:'pp3', title:'Personal Property (18–24)', eyebrow:'Assets',
+  intro:'Money you are owed or may become entitled to, plus intangible property. Answer honestly — undisclosed claims are the most common reason a case goes wrong.',
+  sections:[
+    {idx:18, title:'Other liquidated debts including tax refunds', none:'pp18None', noneLabel:'None',
+     note:'List all refunds you are expecting, including back pay and commissions.',
+     fields:[
+      T('pp18Item','Tax refund / item',6), M('pp18Val','Cash value',3), T('pp18Due','Due date',3),
+      YN('pp18Wages','Are you owed back wages, commissions or vacation pay from your current or previous employer?',12),
+      TA('pp18X','If yes, explain',12,{showIf:d=>d.pp18Wages==='Yes'})
+     ], totalFn: d => num(d.pp18Val)},
+
+    {idx:19, title:'Equitable or future interests, life estates', none:'pp19None', noneLabel:'None',
+     fields:[
+      YN('pp19Trust','Are you the beneficiary of either a revocable or irrevocable trust?',12),
+      YN('pp19Estate','Do you have any other interest in any estate that you can exercise for your benefit?',12),
+      TA('pp19X','If yes to any of the above, explain',12,
+        {showIf:d=>d.pp19Trust==='Yes'||d.pp19Estate==='Yes'})
+     ], totalId:'pp19Total'},
+
+    {idx:20, title:'Interests in the estate of a decedent, or life insurance or trust',
+     none:'pp20None', noneLabel:'None',
+     fields:[
+      YN('pp20Inherit','Have you inherited anything, or do you expect to inherit anything in the next 6 months?',12),
+      YN('pp20LifeIns','Have you received, or do you expect to receive, proceeds from a life insurance claim in the next 6 months?',12),
+      TA('pp20X','If yes to any of the above, explain',12,
+        {showIf:d=>d.pp20Inherit==='Yes'||d.pp20LifeIns==='Yes'})
+     ], totalId:'pp20Total'},
+
+    {idx:21, title:'Other contingent and unliquidated claims of any nature',
+     none:'pp21None', noneLabel:'None',
+     note:'Any claim not already listed above.',
+     fields:[
+      YN('pp21Suit','Are you a plaintiff in a lawsuit, or do you have the right to receive any money in any court?',12),
+      YN('pp21Injury','Have you been injured in an accident where you can sue and recover money damages?',12),
+      YN('pp21Work','Have you been involved in a work injury where you missed time from work, or where you visited a physician?',12),
+      TA('pp21X','If yes to any of the above, explain',12,
+        {showIf:d=>d.pp21Suit==='Yes'||d.pp21Injury==='Yes'||d.pp21Work==='Yes'})
+     ], totalId:'pp21Total'},
+
+    {idx:22, title:'Patents, copyrights and other intellectual property — applied or issued',
+     none:'pp22None', noneLabel:'None',
+     fields:[ TA('pp22X','List and describe',12) ], totalId:'pp22Total'},
+
+    {idx:23, title:'Licenses, franchises and other general intangibles',
+     none:'pp23None', noneLabel:'None',
+     fields:[ TA('pp23X','List and describe',12) ], totalId:'pp23Total'},
+
+    {idx:24, title:'Customer lists or other compilations', none:'pp24None', noneLabel:'None',
+     note:'Any customer lists or other lists containing personally identifiable information.',
+     fields:[ TA('pp24X','List and describe',12) ], totalId:'pp24Total'}
+  ]
+});
+
+/* ---------- 9. Vehicles, boats, aircraft (25–27) ---------- */
+STEPS.push({
+  id:'pp4', title:'Vehicles, Boats & Aircraft', eyebrow:'Assets',
+  intro:'Be as detailed as possible. “’04 Honda” should read “2004 Honda Accord LX”.',
+  sections:[
+    {idx:25, title:'Automobiles, trucks, trailers and accessories',
+     none:'pp25None', noneLabel:'None — I do not own or lease any vehicle',
+     fields:[
+      {t:'rep', id:'vehicles', l:'Vehicle', min:1, addLabel:'Add another vehicle',
+       summary:it=>[it.vYear,it.vMake,it.vModel].filter(Boolean).join(' '), fields:[
+        T('vYear','Year',2), T('vMake','Make',3), T('vModel','Model',4), T('vSub','Sub-model',3),
+        T('vVIN','VIN',6), T('vMileage','Mileage',3),
+        RAD('vCond','Condition',['Excellent','Good','Fair','Poor'],7),
+        M('vValue','Estimated value',3),
+        CKS('vTitle','Who is on the title? (check all that apply)',['Debtor','Spouse','Other'],8),
+        T('vTitleOther','Other — who?',4,{showIf:(d,it)=>(it.vTitle||[]).includes('Other')}),
+        YN('vFinanced','Is the vehicle financed?',6,{rerender:true}),
+        YN('vLeased','Is the vehicle leased?',6,{rerender:true}),
+        {t:'block', l:'Creditor / lienholder', showIf:(d,it)=>it.vFinanced==='Yes'||it.vLeased==='Yes', fields:[
+          T('vCred','Creditor',6), T('vCredAddr','Address',6),
+          T('vCredCity','City',4), ST('vCredState','State',2), T('vCredZip','ZIP',2),
+          T('vAcct','Account No.',4), T('vLoanDate','Date of loan',3),
+          PCT('vRate','Interest rate',2), M('vBalance','Total balance due',3), MO('vPmt','Monthly payment',3),
+          YN('vKeep','Do you want to keep it?',6), YN('vCurrent','Are you current on payments?',6)
+        ]}
+      ]}
+     ], totalFn: d => sumRep(d,'vehicles','vValue')},
+
+    {idx:26, title:'Boats, motors and accessories', none:'pp26None', noneLabel:'None',
+     fields:[
+      {t:'rep', id:'boats', l:'Boat', min:1, addLabel:'Add another boat',
+       summary:it=>[it.btYear,it.btMake,it.btModel].filter(Boolean).join(' '), fields:[
+        T('btYear','Year',2), T('btMake','Make',3), T('btModel','Model',3), T('btDesc','Description',4),
+        M('btValue','Estimated value',3)
+      ]}
+     ], totalFn: d => sumRep(d,'boats','btValue')},
+
+    {idx:27, title:'Aircraft and accessories', none:'pp27None', noneLabel:'None',
+     fields:[
+      {t:'rep', id:'aircraft', l:'Aircraft', min:1, addLabel:'Add another aircraft',
+       summary:it=>[it.acYear,it.acMake2,it.acModel].filter(Boolean).join(' '), fields:[
+        T('acYear','Year',2), T('acMake2','Make',3), T('acModel','Model',3), T('acDesc','Description',4),
+        M('acValue2','Estimated value',3)
+      ]}
+     ], totalFn: d => sumRep(d,'aircraft','acValue2')}
+  ]
+});
+
+/* ---------- 10. Business, farm & other property (28–35) ---------- */
+STEPS.push({
+  id:'pp5', title:'Business, Farm & Other Property', eyebrow:'Assets',
+  intro:'Property used in a business or farm, animals, and anything not already listed.',
+  sections:[
+    {idx:28, title:'Office equipment, furnishings and supplies', none:'pp28None', noneLabel:'None',
+     fields:[
+      {t:'rep', id:'office', l:'Item', min:1, addLabel:'Add another item',
+       summary:it=>it.ofDesc||'', fields:[ T('ofDesc','Description',8), M('ofValue','Used value',4) ]}
+     ], totalFn: d => sumRep(d,'office','ofValue')},
+
+    {idx:29, title:'Machinery, fixtures, equipment and supplies used in business',
+     none:'pp29None', noneLabel:'None',
+     fields:[
+      {t:'rep', id:'machinery', l:'Item', min:1, addLabel:'Add another item',
+       summary:it=>it.mcDesc||'', fields:[ T('mcDesc','Description',8), M('mcValue','Used value',4) ]}
+     ], totalFn: d => sumRep(d,'machinery','mcValue')},
+
+    {idx:30, title:'Inventory', none:'pp30None', noneLabel:'None',
+     fields:[ TA('pp30Desc','Description',12), M('pp30Val','Value',4) ], totalFn: d => num(d.pp30Val)},
+
+    {idx:31, title:'Animals', none:'pp31None', noneLabel:'None',
+     fields:[
+      T('pp31Pets','Family pets — type of animals',12),
+      T('pp31Live','Other animals or livestock',12)
+     ], totalId:'pp31Total'},
+
+    {idx:32, title:'Crops — growing or harvested', none:'pp32None', noneLabel:'None',
+     fields:[ TA('pp32X','List and give particulars',12) ], totalId:'pp32Total'},
+
+    {idx:33, title:'Farming equipment and implements', none:'pp33None', noneLabel:'None',
+     fields:[ TA('pp33X','List any',12) ], totalId:'pp33Total'},
+
+    {idx:34, title:'Farm supplies, chemicals and feed', none:'pp34None', noneLabel:'None',
+     fields:[ TA('pp34X','List any',12) ], totalId:'pp34Total'},
+
+    {idx:35, title:'Other personal property not already listed', none:'pp35None', noneLabel:'None',
+     fields:[ TA('pp35X','List any',12) ], totalId:'pp35Total'},
+
+    {title:'Total personal property', fields:[
+      {t:'grandtotal', l:'Total used value of all personal property (items 1–35)', fn:d=>ppGrandTotal(d)}
+    ]}
+  ]
+});
+/* ============================================================
+   SCHEMA — Part C : leases, priority debts, dependents,
+                     income, expenses, means test
+   ============================================================ */
+
+/* ---------- 11. Leases and contracts ---------- */
+STEPS.push({
+  id:'leases', title:'Your Unexpired Leases & Contracts', eyebrow:'Obligations',
+  intro:'All current leases and contracts: residential leases, service or business contracts, cell phones, lawn service, pest control, and so on.',
+  sections:[
+    {title:'Residential lease (landlord)', none:'leaseNone', noneLabel:'None — I do not rent',
+     fields:[
+      T('lsName','Landlord name',6), T('lsAddr','Address',6),
+      T('lsCity','City',4), ST('lsState','State',2), T('lsZip','ZIP',2),
+      MO('lsPmt','Monthly payment',3), T('lsBegan','Date lease began',3),
+      T('lsEnd','Date scheduled to end',3),
+      YN('lsKeep','Do you wish to keep this lease?',6),
+      YN('lsBehind','Are you behind on your rent payments?',6),
+      YN('lsJudgment','Does your landlord hold a judgment against you?',6)
+     ]},
+    {title:'Other leases or contracts', none:'lease2None', noneLabel:'None',
+     fields:[
+      {t:'rep', id:'otherLeases', l:'Lease / Contract', min:1, addLabel:'Add another lease or contract',
+       summary:it=>it.olName||'', fields:[
+        T('olName','Name of other party',6), T('olAddr','Address',6),
+        T('olCity','City',4), ST('olState','State',2), T('olZip','ZIP',2),
+        MO('olPmt','Monthly payment',3), T('olBegan','Date lease / contract began',3),
+        T('olEnd','Date scheduled to end',3),
+        YN('olKeep','Keep this lease / contract?',6)
+      ]}
+     ]}
+  ]
+});
+
+/* ---------- 12. Priority debts: taxes & child support ---------- */
+STEPS.push({
+  id:'priority', title:'Priority Debts — Taxes & Child Support', eyebrow:'Debts',
+  intro:'Taxes and domestic support obligations receive special treatment in bankruptcy, so we need them separately from your other creditors.',
+  sections:[
+    {title:'Tax filing history', fields:[
+      YN('txReqFed','Were you required to file FEDERAL income taxes during the last 4 calendar years?',12),
+      YN('txFiledFed','Have you FILED federal income taxes during the last 4 calendar years?',12),
+      YN('txReqState','Were you required to file STATE income taxes during the last 4 calendar years?',12),
+      YN('txFiledState','Have you FILED state income taxes during the last 4 calendar years?',12),
+      YN('txOwe','Do you owe money to the IRS, or to any state or local taxing authority?',12,{rerender:true})
+    ]},
+    {title:'Taxes owed', showIf:d=>d.txOwe==='Yes',
+     note:'Complete a row for each taxing authority you owe.',
+     fields:[
+      {t:'rep', id:'taxDebts', l:'Taxing authority', min:1, addLabel:'Add another taxing authority',
+       summary:it=>it.tdAuth||'', fields:[
+        SEL('tdAuth','Authority',['Internal Revenue Service','State','Local / other'],4),
+        ST('tdState','State of',2,{showIf:(d,it)=>it.tdAuth!=='Internal Revenue Service'}),
+        T('tdYears','Year(s)',3), T('tdType','Type of tax',3,{hint:'1040, 940, 941, etc.'}),
+        M('tdBalance','Balance due',3),
+        YN('tdAssessed','Have taxes been assessed?',4),
+        YN('tdLien','Have tax liens been filed?',4),
+        RAD('tdWhose','Whose debt?',['Husband','Spouse'],4)
+      ]}
+     ]},
+    {title:'Child support', fields:[
+      YN('csSupport','Are you currently providing any financial support for children not living with you?',12,{rerender:true}),
+      RAD('csTo','Do you make payments to an individual, or to a state / local child welfare agency?',
+        ['Individual','State / local child welfare agency','Both'],12,
+        {showIf:d=>d.csSupport==='Yes', rerender:true}),
+      RAD('csStatus','Are you current on your child support obligations, or are you behind in payments?',
+        ['Current','Behind in payments'],12,{showIf:d=>d.csSupport==='Yes'})
+    ]},
+    {title:'Individual (parent of child)',
+     showIf:d=>d.csSupport==='Yes' && (d.csTo==='Individual'||d.csTo==='Both'),
+     fields:[
+      T('csIndName','Name of parent',6), T('csIndAddr','Address of parent',6),
+      T('csIndCity','City',4), ST('csIndState','State',2), T('csIndZip','ZIP',2),
+      M('csIndOwed','Total amount owed',3), T('csIndYear','Year began',2),
+      YN('csIndOrder','Is there a court order?',5),
+      T('csIndCase','Case number',4,{showIf:d=>d.csIndOrder==='Yes'}),
+      T('csIndDistrict','District and state where case was filed',6,{showIf:d=>d.csIndOrder==='Yes'})
+    ]},
+    {title:'State / local child welfare agency',
+     showIf:d=>d.csSupport==='Yes' && (d.csTo==='State / local child welfare agency'||d.csTo==='Both'),
+     fields:[
+      T('csAgName','Name of agency',6), T('csAgAddr','Address of agency',6),
+      T('csAgCity','City',4), ST('csAgState','State',2), T('csAgZip','ZIP',2),
+      M('csAgOwed','Total amount owed',3), T('csAgYear','Year began',2),
+      YN('csAgOrder','Is there a court order?',5),
+      T('csAgCase','Case number',4,{showIf:d=>d.csAgOrder==='Yes'}),
+      T('csAgDistrict','State and district where case was filed',6,{showIf:d=>d.csAgOrder==='Yes'})
+    ]}
+  ]
+});
+
+/* ---------- 13. Dependents ---------- */
+STEPS.push({
+  id:'dependents', title:'Your Dependents', eyebrow:'Household',
+  sections:[
+    {title:'Dependents living with you', fields:[
+      YN('hasDeps','Do you have any children / dependents living with you?',12,{rerender:true}),
+      {t:'rep', id:'dependents', l:'Dependent', min:1, addLabel:'Add another dependent',
+       showIf:d=>d.hasDeps==='Yes',
+       summary:it=>it.depName||'', fields:[
+        T('depName','Name',5), D('depDOB','Birthdate',3), T('depRel','Relationship',4)
+      ]}
+    ]}
+  ]
+});
+
+/* ---------- 14. Monthly income ---------- */
+const INC_ROWS = [
+  ['incBusiness','Regular income from operation of business'],
+  ['incRental','Income from rental properties'],
+  ['incInterest','Regular interest and/or dividends'],
+  ['incAlimony','Alimony / child support / maintenance income'],
+  ['incSSI','Social Security income (gross)'],
+  ['incAid','Public aid / food stamps'],
+  ['incPension','Pension / retirement income (gross)'],
+  ['incUnemp','Unemployment compensation (gross)'],
+  ['incContrib','Contributions to household expenses'],
+  ['incOther1','Other', 'incOther1Label'],
+  ['incOther2','Other', 'incOther2Label']
+];
+const PAY_ROWS = [
+  ['payGross','Gross pay before deductions'],
+  ['payOvertime','Overtime / bonuses / commissions (average)'],
+  ['dedTax','Payroll deduction — payroll taxes & social security'],
+  ['dedIns','Payroll deduction — insurance'],
+  ['dedMedical','Payroll deduction — medical / HSA'],
+  ['dedUnion','Payroll deduction — union dues'],
+  ['dedRetire','Payroll deduction — retirement / 401(k)'],
+  ['dedSupport','Payroll deduction — child support / garnishment'],
+  ['dedOther','Payroll deduction — other'],
+  ['payNet','NET take-home pay']
+];
+
+STEPS.push({
+  id:'income', title:'Your Monthly Income', eyebrow:'Finances',
+  intro:'Employment details and all monthly income, for you and your spouse. Enter monthly figures.',
+  sections:[
+    {title:'Employment', fields:[
+      {t:'dualhead'},
+      {t:'dual', id:'empName', l:"Employer's name", kind:'text'},
+      {t:'dual', id:'empAddr', l:"Employer's street address", kind:'text'},
+      {t:'dual', id:'empCity', l:"Employer's city, state, ZIP", kind:'text'},
+      {t:'dual', id:'empOcc', l:'Occupation', kind:'text'},
+      {t:'dual', id:'empSince', l:'Date you began working at this employer', kind:'text'},
+      {t:'dual', id:'empFreq', l:'Pay frequency', kind:'sel',
+        opts:['','Weekly','Bi-weekly','2x per month','Monthly']}
+    ]},
+    {title:'Pay and payroll deductions',
+     note:'Monthly figures. These eleven lines were redacted in the original PDF, so we have used the standard payroll breakdown — tell us if your firm uses different line items.',
+     fields:[
+      {t:'dualhead'},
+      ...PAY_ROWS.map(r=>({t:'dual', id:r[0], l:r[1], kind:'money'}))
+    ]},
+    {title:'Other monthly income', fields:[
+      {t:'dualhead'},
+      ...INC_ROWS.map(r=>({t:'dual', id:r[0], l:r[1], kind:'money', labelField:r[2]||null})),
+      {t:'dualtotal', l:'TOTAL MONTHLY INCOME',
+        fnA:d=>incTotal(d,'_d'), fnB:d=>incTotal(d,'_s')}
+    ]},
+    {title:'Changes ahead', fields:[
+      YN('incChange','Do you expect any increase or decrease in income of 10% or more over the next year?',12,{rerender:true}),
+      TA('incChangeX','If yes, explain',12,{showIf:d=>d.incChange==='Yes'})
+    ]}
+  ]
+});
+
+/* ---------- 15. Monthly expenses ---------- */
+const EXP_ROWS = [
+  ['expRent','Rent payment'],
+  ['expMortgage','Mortgage payment'],
+  ['expMortgage2','Second mortgage payment'],
+  ['__RETAX__',''],
+  ['__HOMEINS__',''],
+  ['expLotRental','Lot rental (mobile home)'],
+  ['expElectric','Electricity bill'],
+  ['expGas','Natural gas / heating oil / propane'],
+  ['expWater','Water & sewer'],
+  ['expGarbage','Garbage pickup'],
+  ['expPhone','Telephone bill'],
+  ['expCable','Cable bill'],
+  ['expHomeMaint','Home maintenance / repairs'],
+  ['expFood','Food / groceries'],
+  ['expClothing','Clothing'],
+  ['expLaundry','Laundry / dry cleaning'],
+  ['expMedical','Medical & dental expenses'],
+  ['expGasoline','Gasoline'],
+  ['expTransport','Other transportation (bus / train)'],
+  ['expRec','Recreation / entertainment'],
+  ['expCharity','Charitable contributions'],
+  ['expLifeIns','Life insurance'],
+  ['expHealthIns','Health insurance (if not deducted from paycheck)'],
+  ['expAutoIns','Automobile insurance'],
+  ['expTaxes','Taxes (if not deducted from paycheck)'],
+  ['expUnion','Union dues (if not deducted from paycheck)'],
+  ['expProf','Professional dues (if not deducted from paycheck)'],
+  ['expVeh1','Vehicle payment #1'],
+  ['expVeh2','Vehicle payment #2'],
+  ['expInstall','Other installment payment'],
+  ['expCell','Cellular telephone'],
+  ['expAlimony','Alimony paid'],
+  ['expChildSup','Child support paid (if not deducted from paycheck)'],
+  ['expBusiness','Regular business expenses'],
+  ['expAutoRepair','Auto repairs / maintenance (monthly average)'],
+  ['expHair','Haircuts / personal care'],
+  ['expChildcare','Child care / day care / babysitting'],
+  ['expSchoolBus','School bus expenses'],
+  ['expSchoolLunch','School lunch expenses'],
+  ['expTuition','College tuition'],
+  ['expStudentLoan','Student loan payments'],
+  ['expOther1','Other','expOther1Label'],
+  ['expOther2','Other','expOther2Label']
+];
+
+STEPS.push({
+  id:'expenses', title:'Your Monthly Expenses', eyebrow:'Finances',
+  intro:'Average monthly amounts. Use the second column only if your spouse lives separately from you.',
+  sections:[
+    {title:'Expense list', fields:[
+      {t:'dualhead', a:'Debtor or joint expenses', b:'Spouse, if residing separately'},
+      ...EXP_ROWS.flatMap(r=>{
+        if(r[0]==='__RETAX__') return [
+          YN('expRETaxInc','Are real estate taxes included in your mortgage payment?',12,{rerender:true,inline:true}),
+          {t:'dual', id:'expRETax', l:'If no — real estate taxes', kind:'money',
+            wa:'Debtor / joint', wb:'Spouse (if separate)', showIf:d=>d.expRETaxInc==='No'}
+        ];
+        if(r[0]==='__HOMEINS__') return [
+          YN('expHomeInsInc','Is home insurance included in your mortgage payment?',12,{rerender:true,inline:true}),
+          {t:'dual', id:'expHomeIns', l:'If no — home insurance', kind:'money',
+            wa:'Debtor / joint', wb:'Spouse (if separate)', showIf:d=>d.expHomeInsInc==='No'}
+        ];
+        return [{t:'dual', id:r[0], l:r[1], kind:'money', labelField:r[2]||null,
+                 wa:'Debtor / joint', wb:'Spouse (if separate)'}];
+      }),
+      {t:'dualtotal', l:'TOTAL MONTHLY EXPENSES',
+        fnA:d=>expTotal(d,'_d'), fnB:d=>expTotal(d,'_s')}
+    ]},
+    {title:'Monthly summary', fields:[
+      {t:'grandtotal', l:'Income minus expenses (debtor / joint)',
+        fn:d=>incTotal(d,'_d')-expTotal(d,'_d'), allowNegative:true}
+    ]}
+  ]
+});
+
+/* ---------- 16. Means test ---------- */
+const MT_CATS = [
+  ['mtWages','Wages, salaries, tips, bonuses, overtime and commissions'],
+  ['mtBusiness','Income from operation of business, profession or farm'],
+  ['mtRents','Rents and other property income (not rent you pay, but rent paid to you)'],
+  ['mtInterest','Interest income, dividends and royalties'],
+  ['mtPension','Pension and/or retirement income'],
+  ['mtOthers','Income from others who contribute to the household expenses who are not filing with you'],
+  ['mtUnemp','Unemployment compensation'],
+  ['mtOther','Income from other sources not provided for or mentioned above']
+];
+const MT_MONTHS = [['m1','Last month'],['m2','2 months ago'],['m3','3 months ago'],
+                   ['m4','4 months ago'],['m5','5 months ago'],['m6','6 months ago']];
+
+STEPS.push({
+  id:'meanstest', title:'Your Means Test Information', eyebrow:'Finances',
+  intro:'Total earned income received before tax deductions, from all sources, for the last six months. This is GROSS pay — not net take-home.',
+  sections:[
+    {title:'Means test', fields:[
+      CK('mtNA','Check this box if the means test does NOT apply to you — meaning you are a disabled veteran with debts incurred primarily during active duty or homeland defense.',12,{rerender:true}),
+      D('mtDate','Today’s date',3,{showIf:d=>!d.mtNA})
+    ]},
+    ...MT_CATS.map(c=>({
+      title:c[1], showIf:d=>!d.mtNA,
+      fields:[{t:'mtx', id:c[0], months:MT_MONTHS}]
+    }))
+  ]
+});
+/* ============================================================
+   SCHEMA — Part D : statement of financial affairs, creditors,
+                     checklist, disclaimer, review
+   ============================================================ */
+
+const FA_YEARS = [['ytd','Year to date (Jan 1 to present)'],
+                  ['ly','Last year (Jan 1 to Dec 31)'],
+                  ['yb','Year before (Jan 1 to Dec 31)']];
+const FA_ROWS  = [['deb','Debtor'],['sp','Spouse']];
+
+STEPS.push({
+  id:'affairs1', title:'Your Financial Affairs (1–5)', eyebrow:'Statement of Financial Affairs',
+  intro:'These questions cover the last few years of your financial history. Check “None” where a question does not apply.',
+  sections:[
+    {title:'Question 1A — Gross annual income from employment', none:'q1aNone', noneLabel:'None',
+     fields:[{t:'mtx', id:'q1a', months:FA_YEARS, rows:FA_ROWS}]},
+
+    {title:'Question 1B — Gross annual income from the operation of a business',
+     none:'q1bNone', noneLabel:'None',
+     fields:[{t:'mtx', id:'q1b', months:FA_YEARS, rows:FA_ROWS}]},
+
+    {title:'Question 2 — Gross annual income from any source other than employment or operation of a business',
+     none:'q2None', noneLabel:'None',
+     fields:[ T('q2Source','Source',6), {t:'mtx', id:'q2', months:FA_YEARS, rows:FA_ROWS} ]},
+
+    {title:'Question 3A — Payments over $600 to any one creditor within the past 90 days',
+     none:'q3aNone', noneLabel:'None',
+     note:'All payments on loans, purchases of goods, and other debts of more than $600 to any one creditor made within the past 90 days.',
+     fields:[{t:'rep', id:'q3a', l:'Payment', min:1, addLabel:'Add another payment',
+       summary:it=>it.q3aCred||'', fields:[
+        T('q3aCred','Creditor',6), T('q3aAddr','Address',6),
+        T('q3aCity','City',4), ST('q3aState','State',2), T('q3aZip','ZIP',2),
+        T('q3aDates','Dates of payment',4), M('q3aAmt','Amount of payment',3), M('q3aBal','Balance due',3)
+     ]}]},
+
+    {title:'Question 3B — Payments to insiders in the last 12 months',
+     none:'q3bNone', noneLabel:'None',
+     note:'All payments made to RELATIVES within the last 12 months prior to this filing.',
+     fields:[{t:'rep', id:'q3b', l:'Payment', min:1, addLabel:'Add another payment',
+       summary:it=>it.q3bRel||'', fields:[
+        T('q3bRel','Relative',6), T('q3bAddr','Address',6),
+        T('q3bCity','City',4), ST('q3bState','State',2), T('q3bZip','ZIP',2),
+        T('q3bDates','Dates of payment',3), M('q3bAmt','Amount of payment',3),
+        M('q3bBal','Balance due',3), T('q3bRelation','Relation',3)
+     ]}]},
+
+    {title:'Question 4A — Lawsuits in the last 12 months', none:'q4aNone', noneLabel:'None',
+     note:'All lawsuits you have been a party to within the last 12 months — suits against you as well as suits you have filed.',
+     fields:[{t:'rep', id:'q4a', l:'Lawsuit', min:1, addLabel:'Add another lawsuit',
+       summary:it=>it.q4aCaption||'', fields:[
+        T('q4aCaption','Caption of suit',8), T('q4aCase','Case No.',4),
+        T('q4aNature','Nature of proceeding',6), T('q4aCourt','Court location',6),
+        TA('q4aStatus','Status or disposition',12)
+     ]}]},
+
+    {title:'Question 4B — Property attached, garnished or seized in the last 12 months',
+     none:'q4bNone', noneLabel:'None',
+     fields:[{t:'rep', id:'q4b', l:'Seizure', min:1, addLabel:'Add another item',
+       summary:it=>it.q4bCred||'', fields:[
+        T('q4bCred','Name of creditor',6), T('q4bAddr','Address',6),
+        T('q4bCity','City',4), ST('q4bState','State',2), T('q4bZip','ZIP',2),
+        T('q4bDate','Date of garnishment or seizure',4),
+        TA('q4bDesc','Describe and value what was taken',12)
+     ]}]},
+
+    {title:'Question 5 — Repossessions, foreclosure sales and returns in the last 12 months',
+     none:'q5None', noneLabel:'None',
+     fields:[{t:'rep', id:'q5', l:'Repossession', min:1, addLabel:'Add another item',
+       summary:it=>it.q5Cred||'', fields:[
+        T('q5Cred','Name of creditor',6), T('q5Addr','Address',6),
+        T('q5City','City',4), ST('q5State','State',2), T('q5Zip','ZIP',2),
+        T('q5Date','Date of repossession or foreclosure',4),
+        TA('q5Desc','Describe and value what was taken',12)
+     ]}]}
+  ]
+});
+
+STEPS.push({
+  id:'affairs2', title:'Your Financial Affairs (6–12)', eyebrow:'Statement of Financial Affairs',
+  sections:[
+    {title:'Question 6A — Assignments of property for the benefit of creditors within 120 days',
+     none:'q6aNone', noneLabel:'None',
+     fields:[
+      T('q6aCred','Name of creditor',6), T('q6aAddr','Address',6),
+      T('q6aCity','City',4), ST('q6aState','State',2), T('q6aZip','ZIP',2),
+      T('q6aDate','Date of assignment',4), TA('q6aTerms','Terms of assignment',12)
+     ]},
+
+    {title:'Question 6B — Property held by a custodian, receiver, pawn broker or court-appointed official in the past 12 months',
+     none:'q6bNone', noneLabel:'None',
+     fields:[
+      T('q6bName','Name of custodian',6), T('q6bAddr','Address',6),
+      T('q6bCity','City',4), ST('q6bState','State',2), T('q6bZip','ZIP',2),
+      T('q6bCase','Case title and number, if any',6), T('q6bDate','Date',3),
+      TA('q6bDesc','Description and value of property',12)
+     ]},
+
+    {title:'Question 7 — Gifts or charitable contributions in the past 12 months',
+     none:'q7None', noneLabel:'None',
+     note:'Do not list usual gifts to family members unless over $200, or charitable contributions less than $100.',
+     fields:[{t:'rep', id:'q7', l:'Gift', min:1, addLabel:'Add another gift',
+       summary:it=>it.q7Name||'', fields:[
+        T('q7Name','Name of recipient',6), T('q7Addr','Address',6),
+        T('q7City','City',4), ST('q7State','State',2), T('q7Zip','ZIP',2),
+        T('q7Rel','Relationship to you',4), T('q7Date','Date of gift',3),
+        TA('q7Desc','Description and value of gift',12)
+     ]}]},
+
+    {title:'Question 8 — Losses from fire, theft, gambling or other casualty',
+     none:'q8None', noneLabel:'None',
+     note:'Within the last 12 months, or immediately after filing this case.',
+     fields:[
+      TA('q8Desc','Description and value of property',12),
+      TA('q8Circ','Description of circumstances resulting in loss — and was it covered by insurance?',12),
+      T('q8Date','Date of loss',3)
+     ]},
+
+    {title:'Question 9 — Payments for debt counseling or bankruptcy in the past 12 months',
+     none:'q9None', noneLabel:'None',
+     note:'All payments you made, or any property you transferred, to any person including attorneys.',
+     fields:[
+      T('q9Payee','Name of payee',6), T('q9Addr','Address',6),
+      T('q9City','City',4), ST('q9State','State',2), T('q9Zip','ZIP',2),
+      M('q9Amt','Amount paid',3), T('q9Date','Date paid',3),
+      T('q9Who','Name of person who paid, if not you',6)
+     ]},
+
+    {title:'Question 10 — Property transferred absolutely or as security within the past 2 years',
+     none:'q10None', noneLabel:'None',
+     fields:[{t:'rep', id:'q10', l:'Transfer', min:1, addLabel:'Add another transfer',
+       summary:it=>it.q10Name||'', fields:[
+        T('q10Name','Name of transferee',6), T('q10Addr','Address',6),
+        T('q10City','City',4), ST('q10State','State',2), T('q10Zip','ZIP',2),
+        T('q10Rel','Relationship to you',4), T('q10Date','Date',3),
+        TA('q10Desc','Description and value of property',12)
+     ]}]},
+
+    {title:'Question 11 — Financial accounts closed, sold or transferred in the past 12 months',
+     none:'q11None', noneLabel:'None',
+     fields:[{t:'rep', id:'q11', l:'Account', min:1, addLabel:'Add another account',
+       summary:it=>it.q11Bank||'', fields:[
+        T('q11Bank','Name of bank',6), T('q11Addr','Address',6),
+        T('q11City','City',4), ST('q11State','State',2), T('q11Zip','ZIP',2),
+        RAD('q11Type','Type of account',['Checking','Savings','Other'],6),
+        T('q11TypeOther','Other — describe',3,{showIf:(d,it)=>it.q11Type==='Other'}),
+        T('q11Num','Account number',4), T('q11Closed','Date of closing',3),
+        M('q11Bal','Final balance',3)
+     ]}]},
+
+    {title:'Question 12 — Safe deposit boxes or depositories in the past 12 months',
+     none:'q12None', noneLabel:'None',
+     fields:[
+      T('q12Bank','Name of bank',6), T('q12Addr','Address',6),
+      T('q12City','City',4), ST('q12State','State',2), T('q12Zip','ZIP',2),
+      TA('q12Contents','Description of contents',12),
+      T('q12Surrender','Date of surrender, if any',3),
+      T('q12Access','Name and address of person with access',8)
+     ]}
+  ]
+});
+
+STEPS.push({
+  id:'affairs3', title:'Your Financial Affairs (13–17)', eyebrow:'Statement of Financial Affairs',
+  sections:[
+    {title:'Question 13 — Setoffs by any creditor in the past 90 days',
+     none:'q13None', noneLabel:'None',
+     note:'Setoffs made by any creditor, including a bank, against a debt or deposit.',
+     fields:[
+      T('q13Cred','Name of creditor',6), T('q13Addr','Address',6),
+      T('q13City','City',4), ST('q13State','State',2), T('q13Zip','ZIP',2),
+      T('q13Date','Date of setoff',3), M('q13Amt','Amount of setoff',3)
+     ]},
+
+    {title:'Question 14 — Property owned by another person that you hold or control',
+     none:'q14None', noneLabel:'None',
+     fields:[
+      T('q14Owner','Name of owner',6), T('q14Addr','Address',6),
+      T('q14City','City',4), ST('q14State','State',2), T('q14Zip','ZIP',2),
+      TA('q14Desc','Description and value of property',12),
+      T('q14Loc','Location of property',6)
+     ]},
+
+    {title:'Question 15 — Prior addresses in the last 3 years', none:'q15None', noneLabel:'None',
+     fields:[{t:'rep', id:'q15', l:'Prior address', min:1, addLabel:'Add another address',
+       summary:it=>it.q15Addr||'', fields:[
+        T('q15Addr','Address',6), T('q15City','City',3), ST('q15State','State',1), T('q15Zip','ZIP',2),
+        T('q15Dates','Dates (from – to)',4), T('q15Names','Names used',5)
+     ]}]},
+
+    {title:'Question 16 — Community property states', none:'q16None', noneLabel:'None',
+     note:'If you have ever lived in any of these community property states within the past 8 years, list your spouse or former spouse and the date you lived in the state.',
+     fields:[
+      CKS('q16States','States lived in',
+        ['Alaska','Arizona','California','Idaho','Louisiana','Nevada','New Mexico','Puerto Rico','Texas','Washington','Wisconsin'],12),
+      T('q16Spouse','Name of spouse or former spouse',6), T('q16Date','Date',3)
+     ]},
+
+    {title:'Question 17 — Environmental law notices', none:'q17None', noneLabel:'None',
+     note:'Name and address of every site where you may have received notice that you were in violation of an environmental law, or any notices regarding hazardous materials.',
+     fields:[
+      T('q17Name','Name',6), T('q17Addr','Address',6),
+      T('q17City','City',4), ST('q17State','State',2), T('q17Zip','ZIP',2),
+      T('q17Date','Date of notice',3), T('q17Type','Type of notice',4),
+      T('q17Agency','Government agency',5)
+     ]}
+  ]
+});
+
+/* ---------- Creditors ---------- */
+STEPS.push({
+  id:'creditors', title:'Your Creditors', eyebrow:'Debts',
+  intro:'List everyone you may owe money to — even if you think the debt is old, disputed, or already handled. Include the original creditor and any collection agency assigned to the account.',
+  sections:[
+    {title:'Creditor list', fields:[
+      NOTE('We pull all three credit bureaus, but reports contain errors and some debts are never reported. A creditor left off this list may not be discharged. When in doubt, list it.','warn'),
+      {t:'rep', id:'creditors', l:'Creditor', min:1, addLabel:'Add another creditor',
+       summary:it=>[it.crName,it.crBalance?('$'+it.crBalance):''].filter(Boolean).join(' · '), fields:[
+        T('crName','Creditor Name',6), T('crAddr','Address',6),
+        T('crCity','City',4), ST('crState','State',2), T('crZip','ZIP',2),
+        T('crAcct','Account Number',4), T('crFrom','Dates used — from',3), T('crTo','to',3),
+        M('crBalance','Balance Due',3),
+        RAD('crType','Type of creditor',
+          ['Credit Card','Medical Bill','Utility Bill','Payday Loan','Student Loan','Other'],12),
+        T('crTypeOther','Other — describe',4,{showIf:(d,it)=>it.crType==='Other'}),
+        RAD('crWhose','Was this debt',['Individual','Joint','Husband Only','Wife Only'],12),
+        {t:'block', l:'Collection agency or attorney (if any)', fields:[
+          T('crCollector','Collection agency or attorney',6), T('crColAddr','Address',6),
+          T('crColCity','City',4), ST('crColState','State',2), T('crColZip','ZIP',2)
+        ]}
+      ]}
+    ]}
+  ]
+});
+
+/* ---------- Documents checklist ---------- */
+const DOC_ITEMS = [
+  ['dcID','<b>COLOR</b> copy of driver’s license / photo ID and proof of social security number (social security card, MediCare card, etc.) — required for the 341 meeting'],
+  ['dcQuest','<b>Completed and signed</b> client questionnaire'],
+  ['dcStubs','Payment advices (“paystubs”) for the past 7 months through your most recent'],
+  ['dcTax','Personal income tax returns with W-2s or 1099s for the past two (2) years — <b>state &amp; federal, full returns</b>'],
+  ['dcBank','Copy of <b>most recent</b> checking / savings account statement for ALL accounts in your name(s)'],
+  ['dcRetire','Copy of <b>most recent</b> retirement statement, CDs, stocks, or any other financial instrument you control'],
+  ['dcCounsel','Credit counseling certificate'],
+  ['dcSecured','Copy of <b>most recent</b> secured debt statements (mortgage, auto, etc.)'],
+  ['dcLegal','Copy of ALL: earnings withholding order (garnishment), short sale, foreclosure document, lawsuit pleadings or judgment documents'],
+  ['dcTaxBill','Copy of most recent state and federal tax bill'],
+  ['dcLifeIns','Life insurance policy statements (<i>whole life only</i>)'],
+  ['dcSpousal','Spousal waiver / divorce decree / child support documents'],
+  ['dcPriorBK','Prior bankruptcy documents (<i>if applicable</i>)']
+];
+const STATEMENTS = [
+  ['st1','Statement # 1','I have listed ALL of my spouse’s property (if married, separated, and/or filing individually).'],
+  ['st2','Statement # 2','I have listed ALL automobiles / boats / aircraft I am on title to.'],
+  ['st3','Statement # 3','I have listed all of my assets in the questionnaire (Ex: car, homes, accounts, etc.).'],
+  ['st3b','Statement # 3','I have listed any inheritance proceeds that I am presently entitled to, or entitled to in the future.'],
+  ['st4','Statement # 4','I have listed any and all real and personal property I have transferred in the past four (4) years.'],
+  ['st5','Statement # 5','I have listed all my debt to the best of my recollection in the completed questionnaire.'],
+  ['st6','Statement # 6','I have listed all of my assets in the questionnaire (Ex: car, homes, accounts, etc.).'],
+  ['st7','Statement # 7','I <b>have</b> owned or operated a business in the past six (6) years. <i>(Initial if applicable)</i>'],
+  ['st8','Statement # 8','I <b>have</b> lived in this state in the past two (2) years. <i>(Initial if applicable)</i>'],
+  ['st9','Statement # 9','I have provided the FULL TAX RETURNS for the past two (2) years, or a statement declaring their unavailability and my attempt(s) to obtain them.']
+];
+
+STEPS.push({
+  id:'checklist', title:'Bring-Back Appointment Checklist', eyebrow:'Documents',
+  intro:'Bring these to your appointment. This list covers the documents required to file your petition — we may request more after your case is filed.',
+  sections:[
+    {title:'Priority documents required', fields:[
+      NOTE('<b>Schumacher Lane, PLLC does not accept any original documents. All documents will be shredded.</b>','warn'),
+      {t:'docs', id:'docs', items:DOC_ITEMS},
+      T('dcMarriageDate','Date of marriage / divorce / separation',5),
+      T('dcOther','Other document',6)
+    ]},
+    {title:'Business debtors (debtors owning or operating a business)', fields:[
+      CK('dcBizIntake','Completed <b>Business Intake</b> — plus all documents requested in the Business Intake Packet (profit &amp; loss, business tax returns, balance sheet)',12)
+    ]},
+    {title:'Required statements for filing',
+     note:'Enter your initials next to each statement that applies to you.',
+     fields:[{t:'stmts', id:'stmts', items:STATEMENTS}]}
+]
+});
+
+/* ---------- Disclaimer & signature ---------- */
+STEPS.push({
+  id:'disclaimer', title:'Disclaimer & Signature', eyebrow:'Final step',
+  sections:[
+    {title:'Disclaimer', fields:[
+      {t:'legal', l:`
+<p>I acknowledge that <u>Schumacher Lane, PLLC</u>, hereinafter referred to as “Attorney”, uses outsourced legal and administrative support services, some of which may be provided by service providers located outside of the United States. By retaining Attorney, I expressly consent to the use of such service providers with no further notice to me of their use in any particular manner. In the course of these services, I authorize Attorney to disclose information that is protected by Attorney’s obligation of confidentiality and by attorney-client privilege. Attorney has carefully chosen the service providers with which they work, and they are all bound to Attorney by contractual obligations of confidentiality. Attorney also ensures that all service providers have not performed services for any parties adverse to my interest. Attorney will also review the work provided by Attorney’s support staff and verify that it is accurate, relevant and complete.</p>
+<p>My signature on this disclaimer constitutes my consent for Attorney to disclose information that Attorney considers necessary to the service providers. Attorney will refrain from using any such service providers if I request it, but this may increase the total fees in my case.</p>
+<p>I acknowledge that Attorney advised me that conducting attorney-client conversations over cellular telephones, though not necessarily violating attorney-client privilege, involves potential risks of interception and such conversations cannot be considered confidential. My signature in this disclaimer serves as my informed consent to communicate with Attorney via cellular telephones should the need arise.</p>
+<p>I further acknowledge that Attorney advised me that sending unencrypted email can violate attorney-client privilege as it involves the potential risk of interception of client confidences. My signature in this disclaimer serves as my informed consent to communicate with Attorney via email.</p>
+<p>Attorney contends that some electronic documents will be stored outside of his office on a secured SSL 128 bit encrypted storage facility. My signature in this disclaimer serves as my informed consent to the storage of my personally identifiable electronic data in the secure SSL 128 bit encrypted online storage facility.</p>`}
+    ]},
+    {title:'Signature', fields:[
+      {t:'sig', id:'sigDebtor', l:'Signature — DEBTOR', nameId:'printDebtor', dateId:'sigDebtorDate'},
+      {t:'sig', id:'sigSpouse', l:'Signature — SPOUSE', nameId:'printSpouse', dateId:'sigSpouseDate',
+       showIf:d=>d.filingType==='Filing jointly with my spouse'},
+      CK('certify','I certify that the information I have provided in this questionnaire is complete, accurate and truthful to the best of my knowledge.',12),
+      NOTE('Typing your name here records your intent. Your attorney will still have you sign the petition itself before it is filed.','info')
+    ]}
+  ]
+});
+
+/* ---------- Review ---------- */
+STEPS.push({
+  id:'review', title:'Review & Send', eyebrow:'Finish',
+  intro:'Check your answers below, then save the file and send it to our office.',
+  sections:[{title:'', fields:[{t:'review'}]}]
+});
+/* ============================================================
+   ENGINE
+   ============================================================ */
+
+const S = { data:{}, step:0, dirty:false, attorney:false, savedOnce:false };
+
+/* ---------- utilities ---------- */
+function num(v){ if(v===null||v===undefined||v==='') return 0;
+  const n=parseFloat(String(v).replace(/[^0-9.\-]/g,'')); return isNaN(n)?0:n; }
+function money(n){ const neg=n<0; n=Math.abs(n);
+  return (neg?'-$':'$')+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function esc(s){ return String(s==null?'':s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function uid(){ return 'x'+Math.random().toString(36).slice(2,9); }
+
+/* path get/set — segments separated by "."; numeric segments index arrays */
+function gv(path){
+  const p=path.split('.'); let o=S.data;
+  for(let i=0;i<p.length;i++){ if(o==null) return undefined; o=o[p[i]]; }
+  return o;
+}
+function sv(path,val){
+  const p=path.split('.'); let o=S.data;
+  for(let i=0;i<p.length-1;i++){
+    const k=p[i], nk=p[i+1];
+    if(o[k]==null) o[k] = /^\d+$/.test(nk)?[]:{};
+    o=o[k];
+  }
+  o[p[p.length-1]]=val;
+}
+
+/* ---------- computed totals used by the schema ---------- */
+function sumRep(d,key,field){
+  const a=d[key]; if(!Array.isArray(a)) return 0;
+  return a.reduce((t,o)=>t+num(o&&o[field]),0);
+}
+function sumHG(d){
+  let t=0; HG_ITEMS.forEach(it=>{ if(d['hg_'+it[0]+'_on']) t+=num(d['hg_'+it[0]+'_v']); }); return t;
+}
+function ppGrandTotal(d){
+  let t=0;
+  ['pp1','pp2','pp3','pp4','pp5'].forEach(sid=>{
+    const st=STEPS.find(s=>s.id===sid); if(!st) return;
+    st.sections.forEach(sec=>{
+      if(sec.none && d[sec.none]) return;
+      if(sec.totalFn) t+=sec.totalFn(d);
+      else if(sec.totalId) t+=num(d[sec.totalId]);
+    });
+  });
+  return t;
+}
+function incTotal(d,sfx){
+  let t=num(d['payNet'+sfx]);
+  INC_ROWS.forEach(r=>{ t+=num(d[r[0]+sfx]); });
+  return t;
+}
+function expTotal(d,sfx){
+  let t=0;
+  EXP_ROWS.forEach(r=>{ if(r[0].startsWith('__')) return; t+=num(d[r[0]+sfx]); });
+  t+=num(d['expRETax'+sfx])+num(d['expHomeIns'+sfx]);
+  return t;
+}
+
+/* ---------- auto-wire re-render on every field that gates another field ----------
+   Any id referenced inside a showIf() closure must trigger a re-render when it
+   changes, otherwise the dependent field never appears. Rather than tagging each
+   one by hand, read the ids straight out of the predicate source. */
+function autoRerender(){
+  const gates = new Set();
+  const scan = fn => {
+    if(typeof fn !== 'function') return;
+    const src = fn.toString();
+    const re = /\b(?:d|it)(?:\.([A-Za-z_$][\w$]*)|\[\s*['"]([^'"]+)['"]\s*\])/g;
+    let m; while((m = re.exec(src))) gates.add(m[1] || m[2]);
+  };
+  const walkFields = fs => fs.forEach(f=>{
+    scan(f.showIf);
+    if(f.fields) walkFields(f.fields);
+  });
+  STEPS.forEach(st=>{
+    scan(st.showIf);
+    st.sections.forEach(sec=>{ scan(sec.showIf); walkFields(sec.fields); });
+  });
+  const tag = fs => fs.forEach(f=>{
+    if(f.id && gates.has(f.id)) f.rerender = true;
+    if(f.fields) tag(f.fields);
+  });
+  STEPS.forEach(st=>st.sections.forEach(sec=>tag(sec.fields)));
+  return gates;
+}
+
+/* ---------- visible steps ---------- */
+function visibleSteps(){ return STEPS.filter(s=>!s.showIf || s.showIf(S.data)); }
+function secVisible(sec){
+  if(sec.attorney && !S.attorney) return false;
+  if(sec.showIf && !sec.showIf(S.data)) return false;
+  return true;
+}
+
+/* ============================================================
+   FIELD RENDERING
+   ctx = { base:'' | 'creditors.0.', item:objectOrData }
+   ============================================================ */
+function P(ctx,id){ return ctx.base + id; }
+function V(ctx,id){ const v=gv(P(ctx,id)); return v===undefined?'':v; }
+
+function fieldVisible(f,ctx){
+  if(f.attorney && !S.attorney) return false;
+  if(f.showIf && !f.showIf(S.data, ctx.item)) return false;
+  return true;
+}
+
+function renderFields(fields,ctx){
+  let out='<div class="grid">';
+  fields.forEach(f=>{ out+=renderField(f,ctx); });
+  return out+'</div>';
+}
+
+function renderField(f,ctx){
+  if(!fieldVisible(f,ctx)) return '';
+  const w = f.w||12, span=`grid-column:span ${w}`;
+  const p = f.id?P(ctx,f.id):null;
+  const rr = f.rerender?' data-rr="1"':'';
+  const hint = f.hint?`<span class="hint">${f.hint}</span>`:'';
+  const lbl = (txt)=>`<label for="${p}">${txt}${hint?'<br>':''}${hint}</label>`;
+
+  switch(f.t){
+    case 'h':
+      return `<div class="f" style="grid-column:span 12"><div class="sec-h" style="margin-top:8px">${esc(f.l)}</div></div>`;
+    case 'note':
+      return `<div style="grid-column:span 12"><div class="callout ${f.k}">${f.l}</div></div>`;
+    case 'legal':
+      return `<div style="grid-column:span 12" class="legal">${f.l}</div>`;
+
+    case 'text': case 'tel': case 'email': case 'num': case 'date': {
+      const type = f.t==='num'?'number':(f.t==='date'?'date':(f.t==='tel'?'tel':(f.t==='email'?'email':'text')));
+      const inner=`<input type="${type}" id="${p}" data-p="${p}"${rr} value="${esc(V(ctx,f.id))}"${f.ph?` placeholder="${esc(f.ph)}"`:''}>`;
+      const wrapped = f.sfx?`<div class="suffix-wrap">${inner}<span class="sfx">${esc(f.sfx)}</span></div>`:inner;
+      return `<div class="f" style="${span}">${lbl(esc(f.l))}${wrapped}</div>`;
+    }
+    case 'money': {
+      const inner=`<div class="money-wrap"><input type="text" inputmode="decimal" id="${p}" data-p="${p}" data-money="1"${rr} value="${esc(V(ctx,f.id))}"></div>`;
+      const sfx = f.sfx?`<span class="hint" style="text-align:right">${esc(f.sfx)}</span>`:'';
+      return `<div class="f" style="${span}">${lbl(esc(f.l))}${inner}${sfx}</div>`;
+    }
+    case 'ta':
+      return `<div class="f" style="${span}">${lbl(esc(f.l))}<textarea id="${p}" data-p="${p}"${rr}>${esc(V(ctx,f.id))}</textarea></div>`;
+
+    case 'sel': {
+      const cur=V(ctx,f.id);
+      const opts=f.opts.map(o=>{
+        const val=typeof o==='object'?o.v:o, txt=typeof o==='object'?o.t:o;
+        return `<option value="${esc(val)}"${cur===val?' selected':''}>${esc(txt||'—')}</option>`;
+      }).join('');
+      return `<div class="f" style="${span}">${lbl(esc(f.l))}<select id="${p}" data-p="${p}"${rr}>${f.opts.includes('')?'':'<option value="">—</option>'}${opts}</select></div>`;
+    }
+
+    case 'yn': case 'rad': {
+      const opts = f.t==='yn'?['Yes','No']:f.opts;
+      const cur=V(ctx,f.id), nm=p.replace(/\./g,'_');
+      const cls = f.t==='yn'?'choice yn':(opts.length>4?'choice cols2':'choice');
+      const body=opts.map(o=>`<label class="${cur===o?'on':''}"><input type="radio" name="${nm}" value="${esc(o)}" data-p="${p}"${rr}${cur===o?' checked':''}>${esc(o)}</label>`).join('');
+      return `<div class="f" style="${span}"><span class="lbl">${esc(f.l)}${hint?'<br>':''}${hint}</span><div class="${cls}">${body}</div></div>`;
+    }
+
+    case 'cks': {
+      const cur=V(ctx,f.id)||[];
+      const body=f.opts.map(o=>`<label class="${cur.includes(o)?'on':''}"><input type="checkbox" data-p="${p}" data-cks="1" value="${esc(o)}"${rr}${cur.includes(o)?' checked':''}>${esc(o)}</label>`).join('');
+      return `<div class="f" style="${span}"><span class="lbl">${esc(f.l)}</span><div class="choice cols3">${body}</div></div>`;
+    }
+
+    case 'ck': {
+      const cur=!!V(ctx,f.id);
+      return `<div class="f" style="${span}"><div class="cbline"><input type="checkbox" id="${p}" data-p="${p}" data-bool="1"${rr}${cur?' checked':''}><label for="${p}">${f.l}</label></div></div>`;
+    }
+
+    case 'block': {
+      if(f.showIf && !f.showIf(S.data,ctx.item)) return '';
+      return `<div style="grid-column:span 12"><div class="block"><div class="bt">${esc(f.l)}</div>${renderFields(f.fields,ctx)}</div></div>`;
+    }
+
+    case 'rep':   return `<div style="grid-column:span 12">${renderRepeater(f,ctx)}</div>`;
+    case 'hg':    return `<div style="grid-column:span 12">${renderHG(f,ctx)}</div>`;
+    case 'docs':  return `<div style="grid-column:span 12">${renderDocs(f,ctx)}</div>`;
+    case 'stmts': return `<div style="grid-column:span 12">${renderStmts(f,ctx)}</div>`;
+    case 'mtx':   return `<div style="grid-column:span 12">${renderMtx(f,ctx)}</div>`;
+    case 'sig':   return `<div style="grid-column:span 12">${renderSig(f,ctx)}</div>`;
+
+    case 'dualhead':
+      return `<div style="grid-column:span 12"><div class="dualhead"><div></div><div>${esc(f.a||'Debtor')}</div><div>${esc(f.b||'Spouse')}</div></div></div>`;
+
+    case 'dual': {
+      const pa=P(ctx,f.id)+'_d', pb=P(ctx,f.id)+'_s';
+      const cell=(pp,who)=>{
+        if(f.kind==='sel'){
+          const cur=gv(pp)||'';
+          return `<div class="dcell" data-who="${who}"><select data-p="${pp}">${f.opts.map(o=>`<option value="${esc(o)}"${cur===o?' selected':''}>${esc(o||'—')}</option>`).join('')}</select></div>`;
+        }
+        if(f.kind==='money'){
+          return `<div class="dcell" data-who="${who}"><div class="money-wrap"><input type="text" inputmode="decimal" data-p="${pp}" data-money="1" value="${esc(gv(pp)||'')}"></div></div>`;
+        }
+        return `<div class="dcell" data-who="${who}"><input type="text" data-p="${pp}" value="${esc(gv(pp)||'')}"></div>`;
+      };
+      let label = esc(f.l);
+      if(f.labelField){
+        label = `${esc(f.l)}: <input type="text" data-p="${P(ctx,f.labelField)}" value="${esc(gv(P(ctx,f.labelField))||'')}" style="width:52%;padding:3px 6px;font-size:12.5px;min-height:26px;border:1px solid var(--line);border-radius:4px" placeholder="describe">`;
+      }
+      return `<div style="grid-column:span 12"><div class="dual"><div class="dl">${label}</div>${cell(pa,f.wa||'Debtor')}${cell(pb,f.wb||'Spouse')}</div></div>`;
+    }
+
+    case 'dualtotal':
+      return `<div style="grid-column:span 12"><div class="dual-total"><div>${esc(f.l)}</div>`+
+        `<div class="tv" data-calc="${esc(f.id||'')}" data-fn="A">${money(f.fnA(S.data))}</div>`+
+        `<div class="tv" data-fn="B">${money(f.fnB(S.data))}</div></div></div>`;
+
+    case 'grandtotal':
+      return `<div style="grid-column:span 12"><div class="total-strip"><span class="tl">${esc(f.l)}</span>`+
+        `<span class="tv" data-gt="1">${money(f.fn(S.data))}</span></div></div>`;
+
+    case 'review':
+      return `<div style="grid-column:span 12" id="review">${renderReview()}</div>`;
+  }
+  return '';
+}
+
+/* ---------- repeater ---------- */
+function renderRepeater(f,ctx){
+  const path=P(ctx,f.id);
+  let arr=gv(path);
+  if(!Array.isArray(arr)){ arr=[]; sv(path,arr); }
+  if(arr.length < (f.min||0)){ while(arr.length<(f.min||1)) arr.push({}); }
+  let out='';
+  arr.forEach((item,i)=>{
+    const ictx={ base:path+'.'+i+'.', item:item };
+    const sum = f.summary?f.summary(item):'';
+    out+=`<div class="rep-item">
+      <div class="rep-head">
+        <span class="rt">${esc(f.l)} ${i+1}</span>
+        <span class="rs">${esc(sum)}</span>
+        ${arr.length>1?`<button type="button" class="btn sm danger" data-act="del" data-rep="${path}" data-i="${i}">Remove</button>`:''}
+      </div>
+      <div class="rep-body">${renderFields(f.fields,ictx)}</div>
+    </div>`;
+  });
+  if(!arr.length) out+=`<div class="rep-empty">Nothing added yet.</div>`;
+  out+=`<div class="rep-add"><button type="button" class="btn sm" data-act="add" data-rep="${path}">+ ${esc(f.addLabel||('Add another '+f.l.toLowerCase()))}</button></div>`;
+  return out;
+}
+
+/* ---------- household goods checklist ---------- */
+function renderHG(f,ctx){
+  let out='<div class="hg">';
+  f.items.forEach(it=>{
+    const on = !!S.data['hg_'+it[0]+'_on'];
+    const extra = it[2]
+      ? `<input type="text" data-p="hg_${it[0]}_x" value="${esc(S.data['hg_'+it[0]+'_x']||'')}" placeholder="${it[2]==='qty'?'qty':'describe'}">`
+      : `<span></span>`;
+    out+=`<div class="hg-row">
+      <input type="checkbox" data-p="hg_${it[0]}_on" data-bool="1"${on?' checked':''} aria-label="${esc(it[1])}">
+      <span class="hl">${esc(it[1])}</span>
+      ${extra}
+      <div class="money-wrap"><input type="text" inputmode="decimal" data-p="hg_${it[0]}_v" data-money="1" value="${esc(S.data['hg_'+it[0]+'_v']||'')}" aria-label="Used value"></div>
+    </div>`;
+  });
+  return out+'</div>';
+}
+
+/* ---------- documents checklist ---------- */
+function renderDocs(f,ctx){
+  let out='';
+  f.items.forEach(it=>{
+    const on=!!S.data['doc_'+it[0]];
+    out+=`<div class="cbline"><input type="checkbox" id="doc_${it[0]}" data-p="doc_${it[0]}" data-bool="1"${on?' checked':''}><label for="doc_${it[0]}">${it[1]}</label></div>`;
+  });
+  return out;
+}
+
+/* ---------- required statements ---------- */
+function renderStmts(f,ctx){
+  let out='<div class="mtx-scroll"><table class="mtx"><thead><tr><th class="rh">Statement</th><th style="text-align:left">I confirm that…</th><th style="width:110px">Initial</th></tr></thead><tbody>';
+  f.items.forEach(it=>{
+    out+=`<tr><td class="rh">${esc(it[1])}</td>
+      <td style="padding:8px 10px;text-align:left;font-size:13px;line-height:1.45">${it[2]}</td>
+      <td><input type="text" data-p="stm_${it[0]}" value="${esc(S.data['stm_'+it[0]]||'')}" maxlength="6" style="text-align:center;text-transform:uppercase;font-weight:700" placeholder="—"></td></tr>`;
+  });
+  return out+'</tbody></table></div>';
+}
+
+/* ---------- matrix (means test / financial affairs) ---------- */
+function renderMtx(f,ctx){
+  const rows = f.rows || [['ind','Individual'],['sp','Spouse']];
+  const cols = f.months;
+  let out='<div class="mtx-scroll"><table class="mtx"><thead><tr><th class="rh"></th>';
+  cols.forEach(c=>out+=`<th>${esc(c[1])}</th>`);
+  out+='<th>Total</th></tr></thead><tbody>';
+  rows.forEach(r=>{
+    out+=`<tr><td class="rh">${esc(r[1])}</td>`;
+    cols.forEach(c=>{
+      const pp=`${f.id}_${r[0]}_${c[0]}`;
+      out+=`<td><input type="text" inputmode="decimal" data-p="${pp}" data-money="1" data-mtx="${f.id}_${r[0]}" value="${esc(S.data[pp]||'')}"></td>`;
+    });
+    out+=`<td class="tot" data-mtxtot="${f.id}_${r[0]}">${money(mtxRowTotal(f,r[0]))}</td></tr>`;
+  });
+  return out+'</tbody></table></div>';
+}
+function mtxRowTotal(f,rowKey){
+  let t=0; f.months.forEach(c=>{ t+=num(S.data[`${f.id}_${rowKey}_${c[0]}`]); }); return t;
+}
+
+/* ---------- signature ---------- */
+function renderSig(f,ctx){
+  if(f.showIf && !f.showIf(S.data)) return '';
+  return `<div class="sigbox">
+    <div class="grid">
+      <div class="f" style="grid-column:span 6"><label>Print Name</label>
+        <input type="text" data-p="${f.nameId}" value="${esc(S.data[f.nameId]||'')}"></div>
+      <div class="f" style="grid-column:span 3"><label>Date</label>
+        <input type="date" data-p="${f.dateId}" value="${esc(S.data[f.dateId]||'')}"></div>
+      <div class="f sigline" style="grid-column:span 9"><label>${esc(f.l)} — type your full legal name</label>
+        <input type="text" data-p="${f.id}" value="${esc(S.data[f.id]||'')}" placeholder="Your signature"></div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   SECTION + STEP RENDERING
+   ============================================================ */
+function renderSection(sec){
+  if(!secVisible(sec)) return '';
+  const noneOn = sec.none ? !!S.data[sec.none] : false;
+  let out='<div class="sec">';
+  if(sec.title){
+    out+=`<div class="sec-h">${sec.idx?`<span class="idx">${sec.idx}</span>`:''}<span>${esc(sec.title)}</span>${sec.attorney?'<span class="att-badge">Attorney only</span>':''}</div>`;
+  }
+  if(sec.note) out+=`<div class="sec-note">${sec.note}</div>`;
+  if(sec.none){
+    out+=`<label class="none-toggle ${noneOn?'on':''}"><input type="checkbox" data-p="${sec.none}" data-bool="1" data-rr="1"${noneOn?' checked':''}>${esc(sec.noneLabel||'None / does not apply')}</label>`;
+  }
+  if(!noneOn){
+    out+=`<div class="sec-body">${renderFields(sec.fields,{base:'',item:S.data})}</div>`;
+    if(sec.totalId){
+      out+=`<div class="subtotal"><span class="sl">Total used value — this category</span>
+        <span style="width:150px"><div class="money-wrap"><input type="text" inputmode="decimal" data-p="${sec.totalId}" data-money="1" value="${esc(S.data[sec.totalId]||'')}" style="width:100%;border:1px solid var(--line);border-radius:6px;padding:7px 9px 7px 20px;font-weight:700"></div></span></div>`;
+    } else if(sec.totalFn){
+      out+=`<div class="subtotal"><span class="sl">Total used value — this category</span><span class="sv" data-secfn="1">${money(sec.totalFn(S.data))}</span></div>`;
+    }
+  }
+  return out+'</div>';
+}
+
+function renderStep(){
+  const vs=visibleSteps();
+  if(S.step>=vs.length) S.step=vs.length-1;
+  if(S.step<0) S.step=0;
+  const st=vs[S.step];
+
+  document.getElementById('stepHead').innerHTML=
+    `<div class="eyebrow">${esc(st.eyebrow||'')}</div><h1>${esc(st.title)}</h1>${st.intro?`<p>${esc(st.intro)}</p>`:''}`;
+  document.getElementById('stepBody').innerHTML=
+    st.sections.map(renderSection).join('') || '<p>Nothing required here.</p>';
+
+  document.getElementById('btnBack').disabled = S.step===0;
+  const nx=document.getElementById('btnNext');
+  nx.textContent = S.step===vs.length-1 ? 'Done' : 'Next →';
+
+  renderNav();
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+function renderNav(){
+  const vs=visibleSteps();
+  const list=document.getElementById('stepList');
+  list.innerHTML = vs.map((s,i)=>{
+    const done = stepHasData(s);
+    return `<li><button data-goto="${i}" class="${i===S.step?'active':''} ${done?'done':''}">
+      <span class="num">${done?'✓':(i+1)}</span><span>${esc(s.title)}</span></button></li>`;
+  }).join('');
+  const mob=document.getElementById('mobSelect');
+  mob.innerHTML = vs.map((s,i)=>`<option value="${i}"${i===S.step?' selected':''}>${i+1}. ${esc(s.title)}${stepHasData(s)?' ✓':''}</option>`).join('');
+
+  const done=vs.filter(stepHasData).length;
+  const pct=Math.round(done/vs.length*100);
+  document.getElementById('pctNum').textContent=pct+'%';
+  document.getElementById('pctBar').style.width=pct+'%';
+}
+
+/* which data keys belong to a step (used for the progress ticks) */
+function stepKeys(step){
+  const keys=[];
+  const walk=(fields)=>fields.forEach(f=>{
+    if(f.t==='rep'){ keys.push({rep:f.id}); }
+    else if(f.t==='hg'){ f.items.forEach(i=>keys.push('hg_'+i[0]+'_on')); }
+    else if(f.t==='docs'){ f.items.forEach(i=>keys.push('doc_'+i[0])); }
+    else if(f.t==='stmts'){ f.items.forEach(i=>keys.push('stm_'+i[0])); }
+    else if(f.t==='mtx'){ const rows=f.rows||[['ind'],['sp']];
+      rows.forEach(r=>f.months.forEach(c=>keys.push(`${f.id}_${r[0]}_${c[0]}`))); }
+    else if(f.t==='dual'){ keys.push(f.id+'_d'); keys.push(f.id+'_s'); }
+    else if(f.t==='block'){ walk(f.fields); }
+    else if(f.t==='sig'){ keys.push(f.id); keys.push(f.nameId); }
+    else if(f.id) keys.push(f.id);
+  });
+  step.sections.forEach(sec=>{
+    if(sec.none) keys.push(sec.none);
+    if(sec.totalId) keys.push(sec.totalId);
+    walk(sec.fields);
+  });
+  return keys;
+}
+const _stepKeyCache={};
+function stepHasData(step){
+  if(step.id==='review') return false;
+  const keys=_stepKeyCache[step.id] || (_stepKeyCache[step.id]=stepKeys(step));
+  const AUTO={formDate:1, mtDate:1};
+  for(const k of keys){
+    if(typeof k==='string' && AUTO[k]) continue;
+    if(typeof k==='object'){
+      const a=S.data[k.rep];
+      if(Array.isArray(a) && a.some(o=>Object.values(o).some(v=>v!==''&&v!=null&&!(Array.isArray(v)&&!v.length)))) return true;
+      continue;
+    }
+    const v=S.data[k];
+    if(v===true) return true;
+    if(typeof v==='string' && v.trim()!=='') return true;
+    if(Array.isArray(v) && v.length) return true;
+  }
+  return false;
+}
+
+/* ---------- live totals without a full re-render ---------- */
+function refreshTotals(){
+  const vs=visibleSteps(); const st=vs[S.step];
+  const body=document.getElementById('stepBody');
+  /* section totalFn subtotals */
+  const secEls=[...body.querySelectorAll('.sec')];
+  let si=0;
+  st.sections.filter(secVisible).forEach((sec,i)=>{
+    const el=secEls[i]; if(!el) return;
+    const t=el.querySelector('[data-secfn]');
+    if(t && sec.totalFn) t.textContent=money(sec.totalFn(S.data));
+  });
+  /* dual totals + grand totals + matrix row totals */
+  const flat=[]; const walk=(fs)=>fs.forEach(f=>{ flat.push(f); if(f.t==='block') walk(f.fields); });
+  st.sections.forEach(s=>walk(s.fields));
+  const dts=[...body.querySelectorAll('.dual-total')];
+  let k=0;
+  flat.filter(f=>f.t==='dualtotal').forEach(f=>{
+    const el=dts[k++]; if(!el) return;
+    const cells=el.querySelectorAll('.tv');
+    if(cells[0]) cells[0].textContent=money(f.fnA(S.data));
+    if(cells[1]) cells[1].textContent=money(f.fnB(S.data));
+  });
+  const gts=[...body.querySelectorAll('[data-gt]')];
+  let g=0;
+  flat.filter(f=>f.t==='grandtotal').forEach(f=>{ const el=gts[g++]; if(el) el.textContent=money(f.fn(S.data)); });
+  flat.filter(f=>f.t==='mtx').forEach(f=>{
+    const rows=f.rows||[['ind','Individual'],['sp','Spouse']];
+    rows.forEach(r=>{
+      const el=body.querySelector(`[data-mtxtot="${f.id}_${r[0]}"]`);
+      if(el) el.textContent=money(mtxRowTotal(f,r[0]));
+    });
+  });
+}
+function currentSections(){ return visibleSteps()[S.step].sections; }
+/* ============================================================
+   REVIEW / PRINT VIEW
+   ============================================================ */
+function rvVal(f,ctx){
+  const raw = f.id ? gv(P(ctx,f.id)) : '';
+  switch(f.t){
+    case 'money': return (raw===''||raw==null)?'':money(num(raw));
+    case 'cks':   return Array.isArray(raw)?raw.join(', '):'';
+    case 'ck':    return raw?'Yes':'';
+    default:      return (raw==null)?'':String(raw);
+  }
+}
+function rvRow(label,val){
+  const empty = (val===''||val==null);
+  return `<tr><td class="k">${label}</td><td class="v${empty?' empty':''}">${empty?'—':esc(val)}</td></tr>`;
+}
+function rvFields(fields,ctx){
+  let rows='', extra='';
+  fields.forEach(f=>{
+    if(!fieldVisible(f,ctx)) return;
+    switch(f.t){
+      case 'h': case 'note': case 'legal': case 'dualhead': break;
+      case 'block':
+        if(f.showIf && !f.showIf(S.data,ctx.item)) break;
+        extra += `<h3>${esc(f.l)}</h3>` + rvFields(f.fields,ctx);
+        break;
+      case 'rep': {
+        const arr=gv(P(ctx,f.id))||[];
+        const used=arr.filter(o=>Object.values(o).some(v=>v!==''&&v!=null&&!(Array.isArray(v)&&!v.length)));
+        if(!used.length){ extra+=`<h3>${esc(f.l)}s</h3><p style="font-size:12.5px;color:#8b95a1">None listed.</p>`; break; }
+        used.forEach((item,i)=>{
+          extra += `<h3>${esc(f.l)} ${i+1}</h3>` + rvFields(f.fields,{base:P(ctx,f.id)+'.'+arr.indexOf(item)+'.',item});
+        });
+        break;
+      }
+      case 'hg': {
+        let r='';
+        f.items.forEach(it=>{ if(S.data['hg_'+it[0]+'_on'])
+          r+=rvRow(esc(it[1])+(S.data['hg_'+it[0]+'_x']?' ('+esc(S.data['hg_'+it[0]+'_x'])+')':''), money(num(S.data['hg_'+it[0]+'_v']))); });
+        extra += r?`<table>${r}</table>`:'<p style="font-size:12.5px;color:#8b95a1">No items checked.</p>';
+        break;
+      }
+      case 'docs': {
+        let r=''; f.items.forEach(it=>{ r+=rvRow(it[1], S.data['doc_'+it[0]]?'Yes':''); });
+        extra += `<table>${r}</table>`; break;
+      }
+      case 'stmts': {
+        let r=''; f.items.forEach(it=>{ r+=rvRow(esc(it[1])+' — '+it[2], S.data['stm_'+it[0]]||''); });
+        extra += `<table>${r}</table>`; break;
+      }
+      case 'mtx': {
+        const rowsD=f.rows||[['ind','Individual'],['sp','Spouse']];
+        let h='<table><tr><td class="k"></td>'+f.months.map(c=>`<td class="k">${esc(c[1])}</td>`).join('')+'<td class="k">Total</td></tr>';
+        rowsD.forEach(r=>{
+          h+=`<tr><td class="k">${esc(r[1])}</td>`+
+             f.months.map(c=>{const v=S.data[`${f.id}_${r[0]}_${c[0]}`]; return `<td class="v${v?'':' empty'}">${v?esc(money(num(v))):'—'}</td>`;}).join('')+
+             `<td class="v">${money(mtxRowTotal(f,r[0]))}</td></tr>`;
+        });
+        extra += h+'</table>'; break;
+      }
+      case 'dual': {
+        const a=gv(P(ctx,f.id)+'_d'), b=gv(P(ctx,f.id)+'_s');
+        if((a===''||a==null)&&(b===''||b==null)) break;
+        const fmt=v=>f.kind==='money'?((v===''||v==null)?'':money(num(v))):(v||'');
+        let lab=esc(f.l);
+        if(f.labelField && gv(P(ctx,f.labelField))) lab+=': '+esc(gv(P(ctx,f.labelField)));
+        rows += `<tr><td class="k">${lab}</td><td class="v">${esc(fmt(a))}${(b!==''&&b!=null)?' <span style="color:#8b95a1">/ spouse:</span> '+esc(fmt(b)):''}</td></tr>`;
+        break;
+      }
+      case 'dualtotal':
+        rows += `<tr><td class="k"><b>${esc(f.l)}</b></td><td class="v"><b>${esc(money(f.fnA(S.data)))}</b>${f.fnB(S.data)?' / spouse: '+esc(money(f.fnB(S.data))):''}</td></tr>`;
+        break;
+      case 'grandtotal':
+        rows += `<tr><td class="k"><b>${esc(f.l)}</b></td><td class="v"><b>${esc(money(f.fn(S.data)))}</b></td></tr>`;
+        break;
+      case 'sig':
+        if(f.showIf && !f.showIf(S.data)) break;
+        rows += rvRow('Print name — '+esc(f.l), S.data[f.nameId]||'');
+        rows += rvRow('Signed', S.data[f.id]||'');
+        rows += rvRow('Date', S.data[f.dateId]||'');
+        break;
+      case 'review': break;
+      default:
+        rows += rvRow(esc(f.l||f.id), rvVal(f,ctx));
+    }
+  });
+  return (rows?`<table>${rows}</table>`:'') + extra;
+}
+
+function renderReview(){
+  let out=`<div class="rv-print-head">
+    <div class="f1">Schumacher Lane, PLLC</div>
+    <div class="f2">Client Questionnaire &nbsp;·&nbsp; ${esc(S.data.clientName||'')} &nbsp;·&nbsp; ${esc(S.data.formDate||new Date().toISOString().slice(0,10))}</div>
+  </div>`;
+  out+=`<div class="callout priv no-print"><b>Almost done.</b> Read through your answers. To fix anything, click the section in the list on the left. When it looks right, press <b>Save my answers</b> at the top and send us the file that downloads.</div>`;
+  visibleSteps().forEach(st=>{
+    if(st.id==='review') return;
+    let body='';
+    st.sections.forEach(sec=>{
+      if(!secVisible(sec)) return;
+      if(sec.none && S.data[sec.none]){
+        body += `<div class="rv-sec">${sec.title?`<h3>${esc(sec.title)}</h3>`:''}<p style="font-size:12.5px;color:#8b95a1">Marked “None”.</p></div>`;
+        return;
+      }
+      const inner = rvFields(sec.fields,{base:'',item:S.data});
+      if(!inner.trim()) return;
+      body += `<div class="rv-sec">${sec.title?`<h3>${esc(sec.title)}</h3>`:''}${inner}${
+        sec.totalId?`<table>${rvRow('Total used value — this category', S.data[sec.totalId]?money(num(S.data[sec.totalId])):'')}</table>`:''}${
+        sec.totalFn?`<table>${rvRow('Total used value — this category', money(sec.totalFn(S.data)))}</table>`:''}</div>`;
+    });
+    if(body.trim()) out += `<h2>${esc(st.title)}</h2>${body}`;
+  });
+  return out;
+}
+/* ============================================================
+   EVENTS, SAVE / LOAD, INIT
+   ============================================================ */
+function markDirty(){
+  S.dirty=true;
+  document.getElementById('saveDot').className='dot unsaved';
+  document.getElementById('saveMsg').textContent='Unsaved changes — press “Save my answers”';
+  const n=S.data.clientName||[S.data.d_First,S.data.d_Last].filter(Boolean).join(' ');
+  document.getElementById('clientTag').textContent = n?('· '+n):'';
+}
+function markSaved(name){
+  S.dirty=false; S.savedOnce=true;
+  document.getElementById('saveDot').className='dot saved';
+  document.getElementById('saveMsg').textContent='Saved to '+name;
+}
+
+const body = () => document.getElementById('stepBody');
+
+document.addEventListener('input', ev=>{
+  const el=ev.target;
+  const p=el.getAttribute && el.getAttribute('data-p');
+  if(!p) return;
+  if(el.type==='checkbox' && el.getAttribute('data-cks')){
+    const cur=(gv(p)||[]).slice();
+    const i=cur.indexOf(el.value);
+    if(el.checked && i<0) cur.push(el.value);
+    if(!el.checked && i>=0) cur.splice(i,1);
+    sv(p,cur);
+    el.closest('label')?.classList.toggle('on',el.checked);
+  } else if(el.type==='checkbox'){
+    sv(p, el.checked);
+    el.closest('.none-toggle')?.classList.toggle('on',el.checked);
+  } else if(el.type==='radio'){
+    sv(p, el.value);
+    const grp=el.closest('.choice');
+    if(grp) grp.querySelectorAll('label').forEach(l=>l.classList.toggle('on', l.contains(el)&&el.checked));
+  } else {
+    sv(p, el.value);
+  }
+  markDirty();
+  if(el.getAttribute('data-rr') && !isTextEntry(el)){ renderStep(); return; }
+  refreshTotals();
+  const rh=el.closest('.rep-item')?.querySelector('.rs');
+  if(rh) updateRepSummaries();
+  renderNav();
+});
+
+/* a free-text field that gates another field must wait for blur, or the
+   re-render would steal focus mid-word */
+function isTextEntry(el){
+  if(el.tagName==='TEXTAREA') return true;
+  return el.tagName==='INPUT' && ['text','tel','email','number','date','search'].includes(el.type);
+}
+document.addEventListener('change', ev=>{
+  const el=ev.target;
+  if(el.getAttribute && el.getAttribute('data-p') && el.getAttribute('data-rr') && isTextEntry(el)){
+    renderStep();
+  }
+});
+
+/* money tidy-up on blur */
+document.addEventListener('blur', ev=>{
+  const el=ev.target;
+  if(!el.getAttribute || !el.getAttribute('data-money')) return;
+  const raw=el.value.trim();
+  if(raw==='') return;
+  const n=num(raw);
+  const out=n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  el.value=out; sv(el.getAttribute('data-p'), out);
+  refreshTotals();
+}, true);
+
+function updateRepSummaries(){
+  const st=visibleSteps()[S.step];
+  const flat=[]; const walk=fs=>fs.forEach(f=>{ if(f.t==='rep') flat.push(f); if(f.t==='block') walk(f.fields); });
+  st.sections.forEach(s=>walk(s.fields));
+  const nodes=[...body().querySelectorAll('.rep-item')];
+  let n=0;
+  flat.forEach(f=>{
+    const arr=gv(f.id)||[];
+    arr.forEach(item=>{
+      const el=nodes[n++]; if(!el) return;
+      const s=el.querySelector('.rs');
+      if(s && f.summary) s.textContent=f.summary(item)||'';
+    });
+  });
+}
+
+/* clicks: repeater add/remove, nav */
+document.addEventListener('click', ev=>{
+  const b=ev.target.closest('button');
+  if(!b) return;
+  const act=b.getAttribute('data-act');
+  if(act==='add'){
+    const path=b.getAttribute('data-rep');
+    const arr=gv(path)||[]; arr.push({}); sv(path,arr);
+    markDirty(); renderStep();
+    return;
+  }
+  if(act==='del'){
+    const path=b.getAttribute('data-rep'), i=+b.getAttribute('data-i');
+    const arr=gv(path)||[]; arr.splice(i,1); sv(path,arr);
+    markDirty(); renderStep();
+    return;
+  }
+  const go=b.getAttribute('data-goto');
+  if(go!==null && go!==undefined){ S.step=+go; renderStep(); }
+});
+
+document.getElementById('mobSelect').addEventListener('change', e=>{ S.step=+e.target.value; renderStep(); });
+document.getElementById('btnBack').addEventListener('click', ()=>{ S.step--; renderStep(); });
+document.getElementById('btnNext').addEventListener('click', ()=>{
+  const vs=visibleSteps();
+  if(S.step<vs.length-1){ S.step++; renderStep(); }
+  else { doSave(); }
+});
+
+/* attorney mode — absent from the client build, so guard the wiring */
+const _btnAtt = document.getElementById('btnAttorney');
+if(_btnAtt) _btnAtt.addEventListener('click', ()=>{
+  S.attorney=!S.attorney;
+  document.body.classList.toggle('attorney',S.attorney);
+  const b=document.getElementById('btnAttorney');
+  b.textContent = S.attorney?'Attorney mode: ON':'Attorney mode';
+  b.classList.toggle('gold',S.attorney);
+  document.getElementById('brandSub').textContent = S.attorney?'Client Questionnaire — attorney view':'Client Questionnaire';
+  renderStep();
+});
+
+/* ---------- save ---------- */
+function safeName(){
+  const n=(S.data.clientName || [S.data.d_Last,S.data.d_First].filter(Boolean).join('-') || 'Client')
+    .replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const d=new Date().toISOString().slice(0,10);
+  return `Questionnaire-${n}-${d}.json`;
+}
+function doSave(){
+  const payload={
+    _meta:{ form:'Schumacher Lane, PLLC — Client Questionnaire', version:FORM_VERSION,
+            savedAt:new Date().toISOString(), client:S.data.clientName||'' },
+    data:S.data
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const name=safeName();
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500);
+  markSaved(name);
+}
+document.getElementById('btnSave').addEventListener('click', doSave);
+document.getElementById('btnSave2').addEventListener('click', doSave);
+
+/* ---------- load ---------- */
+document.getElementById('btnLoad').addEventListener('click', ()=>{
+  if(S.dirty && !confirm('You have unsaved changes. Opening a saved file will replace what is on screen. Continue?')) return;
+  document.getElementById('fileIn').click();
+});
+document.getElementById('fileIn').addEventListener('change', e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const j=JSON.parse(r.result);
+      S.data = (j && j.data) ? j.data : j;
+      S.step=0; S.dirty=false;
+      document.getElementById('saveDot').className='dot saved';
+      document.getElementById('saveMsg').textContent='Opened '+f.name;
+      const n=S.data.clientName||[S.data.d_First,S.data.d_Last].filter(Boolean).join(' ');
+      document.getElementById('clientTag').textContent=n?('· '+n):'';
+      renderStep();
+    }catch(err){
+      alert('That file could not be read. Make sure it is the questionnaire file that this form saved.\n\n'+err.message);
+    }
+  };
+  r.readAsText(f);
+  e.target.value='';
+});
+
+/* ---------- print ---------- */
+document.getElementById('btnPrint').addEventListener('click', ()=>{
+  const vs=visibleSteps();
+  const i=vs.findIndex(s=>s.id==='review');
+  if(i>=0 && S.step!==i){ S.step=i; renderStep(); }
+  setTimeout(()=>window.print(),150);
+});
+
+window.addEventListener('beforeunload', e=>{
+  if(S.dirty){ e.preventDefault(); e.returnValue=''; }
+});
+
+/* ---------- init ---------- */
+const FORM_VERSION='1.0';
+/* strip anything attorney-only out of the client build entirely, so it cannot
+   be revealed by flipping a flag in the console */
+function stripAttorney(){
+  const clean = fs => fs.filter(f=>!f.attorney).map(f=>{
+    if(f.fields) return {...f, fields:clean(f.fields)};
+    return f;
+  });
+  STEPS.forEach(st=>{
+    st.sections = st.sections.filter(sec=>!sec.attorney)
+                             .map(sec=>({...sec, fields:clean(sec.fields)}));
+  });
+  const b=document.getElementById('btnAttorney');
+  if(b) b.remove();
+}
+
+(function init(){
+  if(!BUILD.attorneyMode) stripAttorney();
+  autoRerender();
+  const t=new Date();
+  S.data.formDate = t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+  S.data.mtDate = S.data.formDate;
+  renderStep();
+  S.dirty=false;
+  document.getElementById('saveMsg').textContent='Nothing entered yet';
+})();
+/* ============================================================
+   OPT-IN BROWSER AUTOSAVE  (hosted / client build only)
+   Off by default. Everything is wrapped so that a browser with
+   storage disabled, a private window, or a locked-down kiosk
+   degrades to the plain form rather than breaking.
+   ============================================================ */
+(function autosaveModule(){
+  if(!BUILD.autosave) return;
+
+  const LS_KEY = 'slq_draft_v1';
+  const storage = (function(){
+    try{
+      const k='__slq_probe__';
+      window.localStorage.setItem(k,'1');
+      window.localStorage.removeItem(k);
+      return window.localStorage;
+    }catch(e){ return null; }
+  })();
+  if(!storage) return;                     /* no storage → no toggle, no promise */
+
+  let timer=null, on=false;
+
+  function readDraft(){
+    try{ const raw=storage.getItem(LS_KEY); return raw?JSON.parse(raw):null; }
+    catch(e){ return null; }
+  }
+  function writeDraft(){
+    try{
+      storage.setItem(LS_KEY, JSON.stringify({
+        savedAt:new Date().toISOString(),
+        data:S.data
+      }));
+      stamp('Saved in this browser · ' + new Date().toLocaleTimeString());
+    }catch(e){
+      /* quota, private mode, or the user revoked storage mid-session */
+      on=false;
+      const cb=document.getElementById('asToggle'); if(cb) cb.checked=false;
+      stamp('This browser would not let us save — use “Save my answers” instead');
+    }
+  }
+  function dropDraft(){ try{ storage.removeItem(LS_KEY); }catch(e){} }
+  function stamp(msg){
+    const el=document.getElementById('asStamp'); if(el) el.textContent=msg;
+  }
+  function schedule(){
+    if(!on) return;
+    clearTimeout(timer);
+    timer=setTimeout(writeDraft,600);
+  }
+
+  /* ---------- controls in the status bar ---------- */
+  function mountControls(){
+    const bar=document.querySelector('.savebar-in');
+    if(!bar) return;
+    const wrap=document.createElement('span');
+    wrap.className='autosave-ctl no-print';
+    wrap.innerHTML =
+      '<label class="as-toggle"><input type="checkbox" id="asToggle"> Keep my progress in this browser</label>'+
+      '<button type="button" class="btn sm as-clear" id="btnClearLocal">Clear saved answers</button>'+
+      '<span id="asStamp" class="as-stamp"></span>';
+    bar.insertBefore(wrap, bar.querySelector('#clientTag'));
+
+    document.getElementById('asToggle').addEventListener('change', e=>{
+      on = e.target.checked;
+      if(on){
+        if(!confirm('This keeps your answers in this browser so you can come back later.\n\nOnly do this on a private device — on a shared or public computer your information would stay behind.\n\nTurn it on?')){
+          e.target.checked=false; on=false; return;
+        }
+        writeDraft();
+      } else {
+        dropDraft();
+        stamp('Not saving in this browser');
+      }
+    });
+
+    document.getElementById('btnClearLocal').addEventListener('click', ()=>{
+      if(!confirm('Erase the copy of your answers stored in this browser?\n\nThis does not touch any file you have already downloaded.')) return;
+      dropDraft();
+      on=false;
+      const cb=document.getElementById('asToggle'); if(cb) cb.checked=false;
+      stamp('Cleared from this browser');
+    });
+
+    stamp('Not saving in this browser');
+  }
+
+  /* ---------- offer to restore an earlier draft ---------- */
+  function offerRestore(draft){
+    const main=document.querySelector('main.main');
+    if(!main) return;
+    const when = (()=>{ try{ return new Date(draft.savedAt).toLocaleString(); }catch(e){ return 'earlier'; } })();
+    /* deliberately no name here — on a shared computer the banner would
+       otherwise announce the previous person to whoever sits down next */
+    const bar=document.createElement('div');
+    bar.className='restore-bar no-print';
+    bar.innerHTML =
+      '<div><b>There are unfinished answers saved in this browser</b> from '+esc(when)+'.</div>'+
+      '<div class="rb-btns">'+
+        '<button type="button" class="btn gold sm" id="rbYes">Pick up where I left off</button>'+
+        '<button type="button" class="btn sm" id="rbNo">Start fresh</button>'+
+      '</div>';
+    main.insertBefore(bar, main.firstChild);
+
+    document.getElementById('rbYes').addEventListener('click', ()=>{
+      S.data = draft.data || {};
+      S.step = 0;
+      on = true;
+      const cb=document.getElementById('asToggle'); if(cb) cb.checked=true;
+      bar.remove();
+      renderStep();
+      stamp('Restored from this browser');
+      document.getElementById('saveDot').className='dot unsaved';
+      document.getElementById('saveMsg').textContent='Restored — remember to press “Save my answers” when you finish';
+    });
+    document.getElementById('rbNo').addEventListener('click', ()=>{
+      if(!confirm('Discard the answers saved in this browser and start over?')) return;
+      dropDraft(); bar.remove(); stamp('Not saving in this browser');
+    });
+  }
+
+  /* ---------- wire up ---------- */
+  mountControls();
+  document.addEventListener('input',  schedule);
+  document.addEventListener('change', schedule);
+  document.addEventListener('click',  ev=>{ if(ev.target.closest('button[data-act]')) schedule(); });
+
+  const draft=readDraft();
+  if(draft && draft.data && Object.keys(draft.data).length>2) offerRestore(draft);
+})();
+
+</script>
+</body>
+</html>

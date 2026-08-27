@@ -1,0 +1,37 @@
+# ============================================================
+#  NEVER COMMIT CLIENT DATA TO THIS REPOSITORY.
+#
+#  This repo is PUBLIC (GitHub Pages on the free plan requires it).
+#  A questionnaire file contains Social Security numbers, dates of
+#  birth, account numbers and a complete financial picture. Once a
+#  file is committed and pushed it is in the git history forever —
+#  deleting it in a later commit does NOT remove it. Recovering from
+#  that means rewriting history and force-pushing, and assuming the
+#  data was already scraped.
+#
+#  Client answers belong in your matter files, not here.
+# ============================================================
+
+# saved questionnaire files, in any form
+*.json
+*.slq
+Questionnaire-*
+questionnaire-*
+
+# anything a paralegal might drop in this folder by accident
+*.pdf
+*.docx
+*.xlsx
+*.csv
+clients/
+matters/
+intake/
+_client-data/
+
+# local noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+node_modules/
