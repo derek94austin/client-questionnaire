@@ -37,17 +37,23 @@ HTTPS is automatic and required — leave **Enforce HTTPS** checked. This
 matters: over plain HTTP the page could be modified in transit, and an
 injected script would see everything the client types.
 
-### Custom domain (optional)
+### Custom domain
 
-To serve it at `intake.schumacherlane.com`:
+The form is served at **https://questionnaire.schumacherlane.com/**.
 
-1. Create a file named `CNAME` in this repo containing exactly:
-   `intake.schumacherlane.com`
-2. At your DNS provider, add a `CNAME` record pointing
-   `intake` → `<your-username>.github.io`
-3. GitHub issues the certificate automatically within a few minutes.
+This is set up already. For the record, or if it ever has to be rebuilt,
+the order matters — DNS record first, GitHub second, or the site goes dark
+in between:
 
-This leaves your WordPress site completely untouched.
+1. At the DNS provider (HostGator cPanel → Zone Editor), add a `CNAME`
+   record: `questionnaire.schumacherlane.com.` → `derek94austin.github.io.`
+2. Once that resolves, **Settings → Pages → Custom domain**, enter
+   `questionnaire.schumacherlane.com`, Save. GitHub writes the `CNAME`
+   file in this repo itself — do not hand-edit it.
+3. GitHub issues the certificate automatically, usually within minutes.
+   Then tick **Enforce HTTPS**.
+
+This leaves the main schumacherlane.com site completely untouched.
 
 ---
 
@@ -69,6 +75,53 @@ version.
 `Questionnaire-<Name>-<YYYY-MM-DD>.json`. Keeping successive saves in the
 matter folder gives you a dated trail of what the client said and when,
 without any infrastructure. The most recent file is the current one.
+
+---
+
+## What the form does for you
+
+**Completeness check.** On the review page, every question that applies and is
+still blank is listed, grouped by section, each one a button that jumps
+straight to it. Alongside it are consistency warnings — answers that are each
+fine on their own but do not add up (a vehicle marked financed with no
+creditor named, a joint filing with an empty spouse page, no creditors at
+all). "Do not leave blanks" is the instruction on page 1 of the paper packet;
+this is that instruction, enforced.
+
+**Password-protected files.** When a client saves, they are offered a
+password. If they take it, the answers are encrypted in their own browser
+before the file is written — AES-GCM 256, key stretched with PBKDF2-SHA256
+over 310,000 rounds. The file that lands in their Downloads folder contains no
+readable Social Security number. An intercepted email attachment is useless
+without the password, which the client gives the office **by phone, never in
+the same email as the file**.
+
+There is no recovery. If the password is lost the file cannot be opened, by
+anyone. The client is told this before they choose one. Saving without a
+password stays available for clients who would struggle with it.
+
+Encrypted files are named `.slq`; unprotected ones stay `.json`. Both open
+through **Open saved file**.
+
+**Sending it in.** The review page ends with a **Send to the office** button.
+On a phone it hands the finished file straight to the share sheet with the
+file already attached — one tap, no hunting in the Downloads folder. On a
+computer, where browsers forbid a web page from attaching anything to mail,
+it downloads the file and opens a pre-addressed email telling the client
+exactly which file to attach. If the file was password protected, both paths
+remind the client to phone the password through separately.
+
+The firm's address and phone live in one place — the `FIRM` object at the top
+of `02_helpers.js`. Point it at a dedicated intake mailbox rather than a
+personal one if you have one.
+
+**Office view.** A toggle on the review page switches from the client's
+read-through to the same answers regrouped in the order the schedules ask for
+them — identity, Schedule A/B, D, E, F, G, I, J, Form 122, then the Statement
+of Financial Affairs. Every value has a copy button, each section has a
+"copy section" button, and a checkbox reveals what the client left empty.
+It does not eliminate re-keying into Jubilee, but it makes it a great deal
+faster and harder to get wrong.
 
 ---
 

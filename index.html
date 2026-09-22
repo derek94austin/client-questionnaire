@@ -79,6 +79,81 @@ header.top{
 }
 .restore-bar .rb-btns{display:flex;gap:8px;margin-left:auto}
 
+
+/* ---------- send card ---------- */
+.sendcard{display:flex;gap:18px;align-items:center;flex-wrap:wrap;
+  background:linear-gradient(135deg,var(--navy),var(--navy-3));color:#fff;
+  border-radius:var(--r);padding:18px 20px;margin:0 0 18px;box-shadow:var(--sh)}
+.sendcard .sc-text{flex:1;min-width:260px}
+.sendcard h3{margin:0 0 5px;font-size:17px;color:#fff}
+.sendcard p{margin:0;font-size:13.5px;line-height:1.55;color:#cfe0f5}
+.sendcard p b{color:#fff}
+.sendcard .sc-btn{padding:13px 24px;font-size:15px;white-space:nowrap}
+.lockprompt{background:var(--warn-bg);border:1px solid #e8d5a4;border-radius:6px;
+  padding:9px 11px;color:#6b4b06;font-size:13px}
+.modal .mbody code{background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:2px 6px}
+/* #review h3 is id-specific and would otherwise recolour these cards */
+#review .sendcard h3{color:#fff;font-size:17px;margin:0 0 5px;text-transform:none;letter-spacing:normal;border:0;padding:0}
+#review .audit h3{font-size:15px;margin:0 0 4px;color:inherit;text-transform:none;letter-spacing:normal;border:0;padding:0}
+#review .ov-grp > h3{color:#fff}
+
+/* ---------- completeness audit ---------- */
+.audit{border-radius:var(--r);border:1px solid;padding:14px 16px;margin:0 0 18px}
+.audit.ok{background:var(--ok-bg);border-color:#bfe0cf;color:#12563a}
+.audit.todo{background:var(--warn-bg);border-color:#e8d5a4;color:#6b4b06}
+.audit h3{margin:0 0 4px;font-size:15px}
+.audit .sub{font-size:13px;opacity:.9}
+.audit-groups{margin-top:12px;display:grid;gap:10px}
+.audit-grp{background:#fff;border:1px solid var(--line);border-radius:6px;padding:9px 11px}
+.audit-grp .gt{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--navy);margin-bottom:6px}
+.audit-list{display:flex;flex-wrap:wrap;gap:6px}
+.audit-item{border:1px solid var(--line);background:var(--panel-2);border-radius:5px;padding:4px 9px;
+  font-size:12.5px;cursor:pointer;color:var(--ink-2);text-align:left}
+.audit-item:hover{border-color:var(--navy-3);background:#eef3fa;color:var(--navy)}
+.audit-flags{margin-top:10px;display:grid;gap:6px}
+.audit-flag{background:#fff;border:1px solid #e3bcbc;border-left:3px solid var(--err);border-radius:5px;
+  padding:8px 11px;font-size:13px;color:#7a1f1f}
+.jump-target{outline:3px solid var(--gold) !important;outline-offset:3px;border-radius:6px;
+  animation:jumppulse 2.2s ease-out}
+@keyframes jumppulse{0%{background:#fdf5e3}100%{background:transparent}}
+
+/* ---------- modal ---------- */
+.modal-bg{position:fixed;inset:0;background:rgba(12,22,38,.55);display:grid;place-items:center;z-index:200;padding:18px}
+.modal{background:#fff;border-radius:10px;box-shadow:0 18px 50px rgba(10,20,35,.35);max-width:480px;width:100%;overflow:hidden}
+.modal h3{margin:0;padding:16px 20px;background:var(--navy);color:#fff;font-size:16px}
+.modal .mbody{padding:18px 20px;font-size:14px;line-height:1.55;color:var(--ink-2)}
+.modal .mbody p{margin:0 0 12px}
+.modal .mbody label{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin:12px 0 5px}
+.modal .mbody input{width:100%;border:1px solid var(--line);border-radius:6px;padding:10px;font-size:15px}
+.modal .mfoot{padding:14px 20px;background:var(--panel-2);border-top:1px solid var(--line-2);
+  display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap}
+.modal .merr{color:var(--err);font-size:13px;margin-top:10px;min-height:18px}
+.locknote{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#5fd39b}
+
+/* ---------- office view ---------- */
+.ov-toggle{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:16px}
+.ov-toggle button{border:0;background:#fff;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink-2)}
+.ov-toggle button.on{background:var(--navy);color:#fff}
+.ov-grp{margin-bottom:20px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.ov-grp > h3{margin:0;padding:9px 13px;background:var(--navy);color:#fff;font-size:12px;
+  letter-spacing:.07em;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.ov-grp > h3 .cpall{margin-left:auto;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);
+  color:#fff;border-radius:5px;padding:2px 9px;font-size:11px;cursor:pointer;letter-spacing:0;text-transform:none}
+.ov-sub{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy-3);
+  padding:9px 13px 3px;background:var(--panel-2)}
+table.ov{width:100%;border-collapse:collapse;font-size:13px}
+table.ov td{border-bottom:1px solid var(--line-2);padding:5px 10px;vertical-align:top}
+table.ov td.k{width:42%;color:var(--ink-2)}
+table.ov td.v{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+table.ov td.v.blank{color:#b4bdc7;font-weight:400;font-style:italic}
+table.ov td.c{width:34px;text-align:right;padding:3px 8px 3px 0}
+.cpbtn{border:1px solid var(--line);background:#fff;border-radius:4px;font-size:10.5px;padding:2px 6px;
+  cursor:pointer;color:var(--ink-3)}
+.cpbtn:hover{border-color:var(--navy-3);color:var(--navy)}
+.cpbtn.done{background:var(--ok-bg);border-color:#bfe0cf;color:var(--ok)}
+.ov-note{padding:9px 13px;font-size:12.5px;color:var(--ink-3);font-style:italic}
+@media print{ .ov-toggle,.cpbtn,.ov-grp > h3 .cpall,.audit-item{display:none !important} }
+
 /* ---------- Layout ---------- */
 .wrap{max-width:1400px;margin:0 auto;padding:20px 18px 120px;display:grid;grid-template-columns:270px 1fr;gap:24px;width:100%}
 
@@ -297,6 +372,14 @@ body.attorney .attorney-only{display:block}
   .dual-total{grid-template-columns:1fr}
   .hg-row{grid-template-columns:18px 1fr 78px 90px}
 }
+@media (max-width:700px){
+  .savebar-in > span:last-child{display:none}
+  .savebar-in{padding:5px 12px;gap:8px}
+  .autosave-ctl{gap:7px}
+  .as-stamp{width:100%;font-size:11px}
+  .sendcard{padding:15px 16px}
+  .sendcard .sc-btn{width:100%}
+}
 @media (max-width:560px){
   .top-in{padding:9px 12px}
   .brand .firm{font-size:15px}
@@ -354,7 +437,7 @@ body.attorney .attorney-only{display:block}
         </div>
         <ol class="steps" id="stepList"></ol>
         <div class="side-foot">
-          Questions? Call <b>503-482-8137</b><br>kyle@schumacherlane.com
+          Questions? Call <b>503-482-8137</b><br>info@schumacherlane.com
         </div>
       </div>
     </nav>
@@ -385,6 +468,11 @@ body.attorney .attorney-only{display:block}
 
 /* ---------- build flags (rewritten by the build script) ---------- */
 const BUILD = { attorneyMode:false, autosave:true, label:'client' };
+
+/* ---------- firm contact details (change these in one place) ---------- */
+const FIRM = { name:'Schumacher Lane, PLLC',
+               email:'info@schumacherlane.com',
+               phone:'503-482-8137' };
 
 /* ---------- schema shorthand ---------- */
 const T   = (id,l,w,o)      => ({t:'text', id,l, w:w||4, ...o});
@@ -443,16 +531,16 @@ const PERSON = (p, who, isJoint) => ([
     {hint:'Maiden names, married names, nicknames used on accounts, DBAs. Write "None" if none.'}),
   T(p+'SSN','Social Security Number',4,{hint:'List all if you have more than one.'}),
   H('Where '+(isJoint?'they live':'you live')),
-  T(p+'Addr','Street Address',7), T(p+'Apt','Apt. No.',2), T(p+'City','City',3),
-  ST(p+'State','State',2), T(p+'Zip','ZIP Code',2),
+  T(p+'Addr','Street address',7), T(p+'Apt','Apt. No.',2), T(p+'City','City',3),
+  ST(p+'State','State of residence',2), T(p+'Zip','ZIP Code',2),
   T(p+'County','County of Residence',4,{hint:'County, not city.'}),
   T(p+'Tenure','Length of time at current address',4),
   YN(p+'MailDiff','Is the mailing address different from the street address?',12,{rerender:true}),
-  T(p+'MailAddr','Mailing Address',7,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
-  T(p+'MailApt','Apt. No.',2,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
-  T(p+'MailCity','City',3,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
-  ST(p+'MailState','State',2,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
-  T(p+'MailZip','ZIP Code',2,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
+  T(p+'MailAddr','Mailing address',7,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
+  T(p+'MailApt','Mailing address — Apt. No.',2,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
+  T(p+'MailCity','Mailing address — City',3,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
+  ST(p+'MailState','Mailing address — State',2,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
+  T(p+'MailZip','Mailing address — ZIP',2,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
   H('How to reach '+(isJoint?'them':'you')),
   TEL(p+'Home','Home Telephone',3), TEL(p+'Work','Work Telephone',3),
   TEL(p+'Cell','Cellular Telephone',3), EM(p+'Email','E-mail Address',3),
@@ -1474,7 +1562,8 @@ STEPS.push({
    ENGINE
    ============================================================ */
 
-const S = { data:{}, step:0, dirty:false, attorney:false, savedOnce:false };
+const S = { data:{}, step:0, dirty:false, attorney:false, savedOnce:false,
+             officeView:false, ovBlanks:false };
 
 /* ---------- utilities ---------- */
 function num(v){ if(v===null||v===undefined||v==='') return 0;
@@ -2027,7 +2116,17 @@ function renderReview(){
     <div class="f1">Schumacher Lane, PLLC</div>
     <div class="f2">Client Questionnaire &nbsp;·&nbsp; ${esc(S.data.clientName||'')} &nbsp;·&nbsp; ${esc(S.data.formDate||new Date().toISOString().slice(0,10))}</div>
   </div>`;
-  out+=`<div class="callout priv no-print"><b>Almost done.</b> Read through your answers. To fix anything, click the section in the list on the left. When it looks right, press <b>Save my answers</b> at the top and send us the file that downloads.</div>`;
+
+  out += `<div class="ov-toggle no-print">
+    <button type="button" data-ovmode="client"${S.officeView?'':' class="on"'}>Client review</button>
+    <button type="button" data-ovmode="office"${S.officeView?' class="on"':''}>Office view</button>
+  </div>`;
+
+  if(S.officeView) return out + renderOfficeView();
+
+  out += renderSendCard();
+  out += renderAuditPanel();
+  out+=`<div class="callout priv no-print"><b>Almost done.</b> Read through your answers. To fix anything, click the section in the list on the left, or click any item flagged above. When it looks right, press <b>Save my answers</b> at the top and send us the file that downloads.</div>`;
   visibleSteps().forEach(st=>{
     if(st.id==='review') return;
     let body='';
@@ -2183,22 +2282,8 @@ function safeName(){
   const d=new Date().toISOString().slice(0,10);
   return `Questionnaire-${n}-${d}.json`;
 }
-function doSave(){
-  const payload={
-    _meta:{ form:'Schumacher Lane, PLLC — Client Questionnaire', version:FORM_VERSION,
-            savedAt:new Date().toISOString(), client:S.data.clientName||'' },
-    data:S.data
-  };
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-  const name=safeName();
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob); a.download=name;
-  document.body.appendChild(a); a.click();
-  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500);
-  markSaved(name);
-}
-document.getElementById('btnSave').addEventListener('click', doSave);
-document.getElementById('btnSave2').addEventListener('click', doSave);
+document.getElementById('btnSave').addEventListener('click', ()=>doSave());
+document.getElementById('btnSave2').addEventListener('click', ()=>doSave());
 
 /* ---------- load ---------- */
 document.getElementById('btnLoad').addEventListener('click', ()=>{
@@ -2208,20 +2293,7 @@ document.getElementById('btnLoad').addEventListener('click', ()=>{
 document.getElementById('fileIn').addEventListener('change', e=>{
   const f=e.target.files[0]; if(!f) return;
   const r=new FileReader();
-  r.onload=()=>{
-    try{
-      const j=JSON.parse(r.result);
-      S.data = (j && j.data) ? j.data : j;
-      S.step=0; S.dirty=false;
-      document.getElementById('saveDot').className='dot saved';
-      document.getElementById('saveMsg').textContent='Opened '+f.name;
-      const n=S.data.clientName||[S.data.d_First,S.data.d_Last].filter(Boolean).join(' ');
-      document.getElementById('clientTag').textContent=n?('· '+n):'';
-      renderStep();
-    }catch(err){
-      alert('That file could not be read. Make sure it is the questionnaire file that this form saved.\n\n'+err.message);
-    }
-  };
+  r.onload=()=>{ applyLoadedText(r.result, f.name); };
   r.readAsText(f);
   e.target.value='';
 });
@@ -2394,6 +2466,737 @@ function stripAttorney(){
   const draft=readDraft();
   if(draft && draft.data && Object.keys(draft.data).length>2) offerRestore(draft);
 })();
+
+/* ============================================================
+   COMPLETENESS CHECK
+   Finds every question that is visible, applies, and is still
+   blank — plus a handful of consistency warnings. "Do not leave
+   blanks" is the instruction on page 1 of the paper packet; this
+   is that instruction, enforced.
+   ============================================================ */
+
+/* field types that are never audited individually:
+   - dual / mtx: legitimately sparse (nobody has all 43 expense lines)
+   - hg / docs / stmts / cks / ck: checklists, blank is a real answer  */
+const AUDIT_SKIP_TYPES = new Set(['h','note','legal','dualhead','dual','dualtotal',
+  'grandtotal','mtx','hg','docs','stmts','cks','ck','review']);
+
+/* genuinely optional fields — not omissions */
+const AUDIT_OPTIONAL = [
+  /Middle$/, /Suffix$/, /Apt$/, /BestTime$/, /Other[123]$/, /TypeOther$/,
+  /Label$/, /^dcOther$/, /^atFileNo$/, /^pp8Other/, /Explain$/
+];
+const auditOptional = id => AUDIT_OPTIONAL.some(r => r.test(id));
+
+function auditWalk(fields, ctx, acc, stepIdx, stepTitle, secTitle){
+  fields.forEach(f=>{
+    if(!fieldVisible(f,ctx)) return;
+
+    if(f.t==='block'){
+      if(f.showIf && !f.showIf(S.data,ctx.item)) return;
+      auditWalk(f.fields, ctx, acc, stepIdx, stepTitle, f.l || secTitle);
+      return;
+    }
+    if(f.t==='rep'){
+      const arr = gv(P(ctx,f.id)) || [];
+      arr.forEach((item,i)=>{
+        const touched = Object.values(item||{}).some(v =>
+          v!=='' && v!=null && !(Array.isArray(v) && !v.length));
+        if(!touched) return;                    /* an untouched row is not an omission */
+        auditWalk(f.fields, {base:P(ctx,f.id)+'.'+i+'.', item:item},
+                  acc, stepIdx, stepTitle, `${secTitle} — ${f.l} ${i+1}`);
+      });
+      return;
+    }
+    if(f.t==='sig'){
+      if(f.showIf && !f.showIf(S.data)) return;
+      [[f.nameId,'Print name'],[f.id,'Signature'],[f.dateId,'Date signed']].forEach(([id,lab])=>{
+        if(!String(S.data[id]==null?'':S.data[id]).trim())
+          acc.push({stepIdx, step:stepTitle, sec:secTitle, label:`${lab} — ${f.l}`, path:id});
+      });
+      return;
+    }
+    if(AUDIT_SKIP_TYPES.has(f.t)) return;
+    if(!f.id || auditOptional(f.id)) return;
+
+    const path = P(ctx,f.id), v = gv(path);
+    if(v==='' || v==null)
+      acc.push({stepIdx, step:stepTitle, sec:secTitle, label:f.l||f.id, path});
+  });
+}
+
+function auditBlanks(){
+  const acc=[];
+  visibleSteps().forEach((st,si)=>{
+    if(st.id==='review') return;
+    st.sections.forEach(sec=>{
+      if(!secVisible(sec)) return;
+      if(sec.none && S.data[sec.none]) return;       /* marked "None" — skip the whole thing */
+      auditWalk(sec.fields, {base:'',item:S.data}, acc, si, st.title, sec.title||st.title);
+    });
+  });
+  return acc;
+}
+
+/* things that are individually answered but do not add up */
+function auditFlags(){
+  const d=S.data, f=[];
+  const filled = id => String(d[id]==null?'':d[id]).trim()!=='';
+  const rows = (k,field) => (d[k]||[]).filter(o=>String((o||{})[field]||'').trim()!=='');
+
+  if(incTotal(d,'_d')===0 && incTotal(d,'_s')===0)
+    f.push('No monthly income has been entered anywhere on the income page.');
+  if(expTotal(d,'_d')===0 && expTotal(d,'_s')===0)
+    f.push('No monthly expenses have been entered anywhere on the expenses page.');
+
+  if(!d.mtNA){
+    let t=0;
+    MT_CATS.forEach(c=>['ind','sp'].forEach(r=>MT_MONTHS.forEach(m=>{ t+=num(d[`${c[0]}_${r}_${m[0]}`]); })));
+    if(t===0) f.push('The means test is empty and the disabled-veteran exemption box is not checked.');
+  }
+  if(!rows('creditors','crName').length)
+    f.push('No creditors are listed. A creditor left off the schedules may not be discharged.');
+
+  if(d.ownsRealProp==='Yes' && !rows('realProps','rpAddr').length)
+    f.push('You answered that you own real property, but no property address is listed.');
+  if(d.ownsMobile==='Yes' && !filled('mhDesc'))
+    f.push('You answered that you own a mobile home, but the mobile home page is blank.');
+  if(d.doYouRent==='Yes' && d.leaseNone)
+    f.push('You answered that you rent, but the residential lease section is marked “None”.');
+  if(d.hasDeps==='Yes' && !rows('dependents','depName').length)
+    f.push('You answered that dependents live with you, but none are listed.');
+  if(d.filingType==='Filing jointly with my spouse' && !filled('j_First'))
+    f.push('This is a joint filing, but your spouse’s information page is blank.');
+  if(d.csSupport==='Yes' && !filled('csIndName') && !filled('csAgName'))
+    f.push('You answered that you support children not living with you, but no payee is listed.');
+  if(d.txOwe==='Yes' && !rows('taxDebts','tdYears').length)
+    f.push('You answered that you owe taxes, but no taxing authority is listed.');
+
+  (d.vehicles||[]).forEach((v,i)=>{
+    if((v.vFinanced==='Yes'||v.vLeased==='Yes') && !String(v.vCred||'').trim())
+      f.push(`Vehicle ${i+1} is marked financed or leased, but no creditor is named.`);
+  });
+  (d.realProps||[]).forEach((p,i)=>{
+    if(String(p.rpAddr||'').trim() && !String(p.rpM1_Name||'').trim())
+      f.push(`Property ${i+1} has no mortgage listed — confirm it is owned free and clear.`);
+  });
+
+  if(!d.certify)
+    f.push('The certification checkbox on the signature page has not been checked.');
+  return f;
+}
+
+/* ---------- panel ---------- */
+function cssEsc(s){
+  return (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/([^\w-])/g,'\\$1');
+}
+function jumpToField(stepIdx, path){
+  S.step = stepIdx;
+  renderStep();
+  setTimeout(()=>{
+    const el = document.querySelector(`[data-p="${cssEsc(path)}"]`);
+    if(!el) return;
+    const box = el.closest('.f') || el.closest('.dual') || el;
+    box.scrollIntoView({block:'center', behavior:'smooth'});
+    box.classList.add('jump-target');
+    setTimeout(()=>box.classList.remove('jump-target'), 2400);
+    try{ el.focus({preventScroll:true}); }catch(e){}
+  }, 140);
+}
+
+function renderAuditPanel(){
+  const blanks = auditBlanks(), flags = auditFlags();
+  if(!blanks.length && !flags.length){
+    return `<div class="audit ok"><h3>Nothing left blank</h3>
+      <div class="sub">Every question that applies to you has an answer. Save your file and send it to the office.</div></div>`;
+  }
+  const groups = {};
+  blanks.forEach(b=>{ (groups[b.step] = groups[b.step] || []).push(b); });
+
+  let out = `<div class="audit todo">
+    <h3>${blanks.length ? blanks.length + (blanks.length===1?' question is':' questions are') + ' still blank' : 'A few things to check'}</h3>
+    <div class="sub">Blank answers hold cases up more than anything else. Click any item to jump straight to it. If something truly does not apply, write “N/A” or tick the section’s “None” box.</div>`;
+
+  if(blanks.length){
+    out += '<div class="audit-groups">';
+    Object.keys(groups).forEach(step=>{
+      const list = groups[step], CAP = 20;
+      out += `<div class="audit-grp"><div class="gt">${esc(step)} — ${list.length}</div><div class="audit-list">`;
+      list.slice(0,CAP).forEach(b=>{
+        const lab = b.sec && b.sec!==b.step ? `${b.sec}: ${b.label}` : b.label;
+        out += `<button type="button" class="audit-item" data-jump="${esc(b.path)}" data-step="${b.stepIdx}">${esc(lab)}</button>`;
+      });
+      if(list.length>CAP)
+        out += `<button type="button" class="audit-item" data-jump="${esc(list[CAP].path)}" data-step="${list[CAP].stepIdx}"
+                  style="font-style:italic">and ${list.length-CAP} more — open this section</button>`;
+      out += '</div></div>';
+    });
+    out += '</div>';
+  }
+  if(flags.length){
+    out += '<div class="audit-flags">' +
+      flags.map(t=>`<div class="audit-flag">${t}</div>`).join('') + '</div>';
+  }
+  return out + '</div>';
+}
+/* ============================================================
+   PASSWORD-PROTECTED SAVE FILES
+   The client's answers are encrypted in their own browser before
+   the file is written. An intercepted attachment is useless
+   without the password, which the firm shares by phone.
+   AES-GCM 256, key derived with PBKDF2-SHA256 (310,000 rounds).
+   ============================================================ */
+
+const CRYPTO_OK = !!(window.isSecureContext && window.crypto && window.crypto.subtle);
+const KDF_ROUNDS = 310000;
+
+function b64(u8){
+  let s='', CH=0x8000;
+  for(let i=0;i<u8.length;i+=CH) s += String.fromCharCode.apply(null, u8.subarray(i,i+CH));
+  return btoa(s);
+}
+function unb64(s){ return Uint8Array.from(atob(s), c=>c.charCodeAt(0)); }
+
+async function deriveKey(pass, salt, use){
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass),
+    'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    {name:'PBKDF2', salt, iterations:KDF_ROUNDS, hash:'SHA-256'},
+    base, {name:'AES-GCM', length:256}, false, [use]);
+}
+async function encryptPayload(obj, pass){
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv   = crypto.getRandomValues(new Uint8Array(12));
+  const key  = await deriveKey(pass, salt, 'encrypt');
+  const ct   = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key,
+                 new TextEncoder().encode(JSON.stringify(obj)));
+  return { format:'SLQ-ENC-1', note:'Schumacher Lane client questionnaire — password protected.',
+           kdf:'PBKDF2-SHA256', iterations:KDF_ROUNDS,
+           salt:b64(salt), iv:b64(iv), data:b64(new Uint8Array(ct)) };
+}
+async function decryptPayload(env, pass){
+  const key = await deriveKey(pass, unb64(env.salt), 'decrypt');
+  const pt  = await crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(env.iv)}, key, unb64(env.data));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+
+/* ---------- small promise-based modal ---------- */
+function modal(opts){
+  return new Promise(resolve=>{
+    const bg = document.createElement('div');
+    bg.className = 'modal-bg';
+    bg.innerHTML = `<div class="modal"><h3>${esc(opts.title)}</h3>
+      <div class="mbody">${opts.body}<div class="merr" id="mErr"></div></div>
+      <div class="mfoot">${opts.buttons.map((b,i)=>
+        `<button type="button" class="btn ${b.cls||''}" data-mv="${i}">${esc(b.label)}</button>`).join('')}</div></div>`;
+    document.body.appendChild(bg);
+    const finish = v => { bg.remove(); resolve(v); };
+    bg.addEventListener('click', ev=>{
+      const btn = ev.target.closest('[data-mv]');
+      if(!btn) return;
+      const spec = opts.buttons[+btn.getAttribute('data-mv')];
+      if(spec.validate){
+        const err = spec.validate(bg);
+        if(err){ bg.querySelector('#mErr').textContent = err; return; }
+      }
+      finish(typeof spec.value==='function' ? spec.value(bg) : spec.value);
+    });
+    bg.addEventListener('keydown', ev=>{
+      if(ev.key==='Enter'){
+        ev.preventDefault();
+        const primary = bg.querySelector('[data-mv="0"]');
+        if(primary) primary.click();
+      }
+    });
+    const first = bg.querySelector('input');
+    if(first) setTimeout(()=>first.focus(), 60);
+  });
+}
+
+/* ---------- save ---------- */
+function downloadFile(text, name, mime){
+  const blob = new Blob([text], {type:mime||'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+function basePayload(){
+  return { _meta:{ form:'Schumacher Lane, PLLC — Client Questionnaire', version:FORM_VERSION,
+                   savedAt:new Date().toISOString(), client:S.data.clientName||'' },
+           data:S.data };
+}
+
+/* Builds the file the client will keep or send. Returns {blob,name,locked}
+   or null if they backed out. Shared by Save and Send. */
+async function buildSaveBlob(){
+  const stem = safeName().replace(/\.json$/,'');
+  const plainBlob = () => new Blob([JSON.stringify(basePayload(),null,2)], {type:'application/json'});
+
+  if(!CRYPTO_OK) return {blob:plainBlob(), name:stem+'.json', locked:false};
+
+  const choice = await modal({
+    title:'Protect this file?',
+    body:`<p>This file contains your Social Security number, dates of birth and account numbers.
+          Adding a password means that if it is ever intercepted in transit, it is unreadable
+          without that password.</p>
+          <p><b>Give the password to our office by phone — never in the same message as the file.</b></p>`,
+    buttons:[
+      {label:'Add a password', cls:'gold', value:'pw'},
+      {label:'Continue without one', value:'plain'},
+      {label:'Cancel', value:null}
+    ]
+  });
+  if(choice===null) return null;
+  if(choice==='plain') return {blob:plainBlob(), name:stem+'.json', locked:false};
+
+  const pass = await modal({
+    title:'Choose a password',
+    body:`<p>Write it down before you continue. <b>There is no way to recover this file if the
+          password is lost</b> — not by us, not by anyone.</p>
+          <label for="pw1">Password (at least 8 characters)</label>
+          <input type="password" id="pw1" autocomplete="new-password">
+          <label for="pw2">Type it again</label>
+          <input type="password" id="pw2" autocomplete="new-password">`,
+    buttons:[
+      {label:'Protect the file', cls:'gold', validate:bg=>{
+        const a=bg.querySelector('#pw1').value, b=bg.querySelector('#pw2').value;
+        if(a.length<8) return 'Please use at least 8 characters.';
+        if(a!==b)      return 'The two passwords do not match.';
+        return null;
+      }, value:bg=>bg.querySelector('#pw1').value},
+      {label:'Back', value:null}
+    ]
+  });
+  if(pass===null) return null;
+
+  try{
+    const env = await encryptPayload(basePayload(), pass);
+    return {blob:new Blob([JSON.stringify(env,null,2)],{type:'application/json'}), name:stem+'.slq', locked:true};
+  }catch(err){
+    await modal({title:'Could not protect the file',
+      body:`<p>Something went wrong: ${esc(err.message)}</p>
+            <p>Your answers are safe on screen — try again without a password.</p>`,
+      buttons:[{label:'OK', cls:'gold', value:null}]});
+    return null;
+  }
+}
+
+function downloadBlob(blob, name){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+
+async function doSave(){
+  const r = await buildSaveBlob();
+  if(!r) return;
+  downloadBlob(r.blob, r.name);
+  markSaved(r.name + (r.locked?'  \u{1F512}':''));
+}
+
+/* ---------- load ---------- */
+async function applyLoadedText(text, filename){
+  let parsed;
+  try{ parsed = JSON.parse(text); }
+  catch(err){
+    await modal({title:'That file could not be read',
+      body:`<p>It does not look like a questionnaire file. Make sure you are opening the
+            <code>.json</code> or <code>.slq</code> file this form saved.</p>`,
+      buttons:[{label:'OK', cls:'gold', value:null}]});
+    return;
+  }
+
+  if(parsed && typeof parsed.format==='string' && parsed.format.indexOf('SLQ-ENC')===0){
+    if(!CRYPTO_OK){
+      await modal({title:'Cannot open a protected file here',
+        body:`<p>Encrypted files can only be opened over a secure (https) connection, and this page
+              was opened directly from your computer.</p>
+              <p>Open the questionnaire from its web address instead, then use
+              <b>Open saved file</b> there.</p>`,
+        buttons:[{label:'OK', cls:'gold', value:null}]});
+      return;
+    }
+    while(true){
+      const pass = await modal({
+        title:'This file is password protected',
+        body:`<p>Enter the password used when <b>${esc(filename||'this file')}</b> was saved.</p>
+              <label for="pwd">Password</label><input type="password" id="pwd" autocomplete="off">`,
+        buttons:[
+          {label:'Unlock', cls:'gold', validate:bg=>bg.querySelector('#pwd').value ? null : 'Enter the password.',
+           value:bg=>bg.querySelector('#pwd').value},
+          {label:'Cancel', value:null}
+        ]
+      });
+      if(pass===null) return;
+      try{
+        parsed = await decryptPayload(parsed, pass);
+        break;
+      }catch(err){
+        const again = await modal({title:'That password did not work',
+          body:`<p>The password did not unlock this file. Passwords are case-sensitive.</p>`,
+          buttons:[{label:'Try again', cls:'gold', value:true},{label:'Give up', value:false}]});
+        if(!again) return;
+        parsed = JSON.parse(text);     /* re-read the envelope for the next attempt */
+      }
+    }
+  }
+
+  S.data = (parsed && parsed.data) ? parsed.data : parsed;
+  S.step = 0; S.dirty = false;
+  document.getElementById('saveDot').className = 'dot saved';
+  document.getElementById('saveMsg').textContent = 'Opened ' + (filename||'file');
+  const n = S.data.clientName || [S.data.d_First,S.data.d_Last].filter(Boolean).join(' ');
+  document.getElementById('clientTag').textContent = n ? ('· '+n) : '';
+  renderStep();
+}
+/* ============================================================
+   OFFICE VIEW — answers reordered for petition data entry
+   Same data as the client review, regrouped into the order the
+   schedules ask for it, with a copy button on every value.
+   ============================================================ */
+
+const OFFICE_ORDER = [
+  {title:'1 · Debtor — identity & address',            steps:['debtor']},
+  {title:'2 · Joint debtor',                           steps:['joint']},
+  {title:'3 · Case setup',                             steps:['checklist'], onlyAttorney:true},
+  {title:'4 · Schedule A/B — Real property',           steps:['realprop','mobile'],
+   note:'Mortgages and liens listed here are the Schedule D secured claims for this property.'},
+  {title:'5 · Schedule A/B — Personal property',       steps:['pp1','pp2','pp3','pp4','pp5'],
+   note:'Vehicle creditors listed under each vehicle are Schedule D secured claims.'},
+  {title:'6 · Schedule E — Priority debts',            steps:['priority']},
+  {title:'7 · Schedule F — Unsecured creditors',       steps:['creditors']},
+  {title:'8 · Schedule G — Leases & contracts',        steps:['leases']},
+  {title:'9 · Dependents & household',                 steps:['dependents']},
+  {title:'10 · Schedule I — Income',                   steps:['income']},
+  {title:'11 · Schedule J — Expenses',                 steps:['expenses']},
+  {title:'12 · Form 122 — Means test',                 steps:['meanstest']},
+  {title:'13 · Statement of Financial Affairs',        steps:['affairs1','affairs2','affairs3']},
+  {title:'14 · Documents & signature',                 steps:['checklist','disclaimer'],
+   skipAttorney:true}
+];
+
+function ovFmt(f, raw){
+  if(raw==='' || raw==null) return '';
+  switch(f.t){
+    case 'money': return money(num(raw));
+    case 'cks':   return Array.isArray(raw) ? raw.join(', ') : '';
+    case 'ck':    return raw ? 'Yes' : '';
+    default:      return String(raw);
+  }
+}
+
+/* collect {label, value} rows out of a field list */
+function ovRows(fields, ctx, out, prefix){
+  fields.forEach(f=>{
+    if(!fieldVisible(f,ctx)) return;
+    switch(f.t){
+      case 'h': case 'note': case 'legal': case 'dualhead': case 'review': break;
+
+      case 'block':
+        if(f.showIf && !f.showIf(S.data,ctx.item)) break;
+        ovRows(f.fields, ctx, out, (prefix?prefix+' · ':'') + f.l);
+        break;
+
+      case 'rep': {
+        const arr = gv(P(ctx,f.id)) || [];
+        arr.forEach((item,i)=>{
+          const touched = Object.values(item||{}).some(v=>v!=='' && v!=null && !(Array.isArray(v)&&!v.length));
+          if(!touched) return;
+          out.push({sub:`${f.l} ${i+1}`});
+          ovRows(f.fields, {base:P(ctx,f.id)+'.'+i+'.', item}, out, '');
+        });
+        break;
+      }
+      case 'hg': {
+        f.items.forEach(it=>{
+          if(!S.data['hg_'+it[0]+'_on']) return;
+          const x = S.data['hg_'+it[0]+'_x'];
+          out.push({label: it[1] + (x?` (${x})`:''), value: money(num(S.data['hg_'+it[0]+'_v']))});
+        });
+        break;
+      }
+      case 'docs':
+        f.items.forEach(it=>{
+          const plain = String(it[1]).replace(/<[^>]+>/g,'');
+          out.push({label:plain, value:S.data['doc_'+it[0]] ? 'Received' : ''});
+        });
+        break;
+      case 'stmts':
+        f.items.forEach(it=>{
+          out.push({label:it[1]+' initials', value:S.data['stm_'+it[0]]||''});
+        });
+        break;
+      case 'mtx': {
+        const rows = f.rows || [['ind','Individual'],['sp','Spouse']];
+        rows.forEach(r=>{
+          f.months.forEach(c=>{
+            const v = S.data[`${f.id}_${r[0]}_${c[0]}`];
+            if(v==='' || v==null) return;
+            out.push({label:`${r[1]} — ${c[1]}`, value:money(num(v))});
+          });
+          const t = mtxRowTotal(f, r[0]);
+          if(t) out.push({label:`${r[1]} — six-month total`, value:money(t), strong:true});
+        });
+        break;
+      }
+      case 'dual': {
+        const a = gv(P(ctx,f.id)+'_d'), b = gv(P(ctx,f.id)+'_s');
+        let lab = f.l;
+        if(f.labelField && gv(P(ctx,f.labelField))) lab += ': ' + gv(P(ctx,f.labelField));
+        const fmt = v => f.kind==='money' ? ((v===''||v==null)?'':money(num(v))) : (v||'');
+        if(a!=='' && a!=null) out.push({label:lab, value:fmt(a)});
+        if(b!=='' && b!=null) out.push({label:lab+' (spouse)', value:fmt(b)});
+        break;
+      }
+      case 'dualtotal':
+        out.push({label:f.l, value:money(f.fnA(S.data)), strong:true});
+        if(f.fnB(S.data)) out.push({label:f.l+' (spouse)', value:money(f.fnB(S.data)), strong:true});
+        break;
+      case 'grandtotal':
+        out.push({label:f.l, value:money(f.fn(S.data)), strong:true});
+        break;
+      case 'sig':
+        if(f.showIf && !f.showIf(S.data)) break;
+        out.push({label:'Print name — '+f.l, value:S.data[f.nameId]||''});
+        out.push({label:'Signed — '+f.l,     value:S.data[f.id]||''});
+        out.push({label:'Date — '+f.l,       value:S.data[f.dateId]||''});
+        break;
+      default:
+        if(!f.id) break;
+        out.push({label:(prefix?prefix+' · ':'') + (f.l||f.id), value:ovFmt(f, gv(P(ctx,f.id)))});
+    }
+  });
+}
+
+function ovGroupRows(grp){
+  const out = [];
+  grp.steps.forEach(sid=>{
+    const st = STEPS.find(s=>s.id===sid);
+    if(!st) return;
+    if(st.showIf && !st.showIf(S.data)) return;
+    st.sections.forEach(sec=>{
+      if(!secVisible(sec)) return;
+      if(grp.onlyAttorney && !sec.attorney) return;
+      if(grp.skipAttorney && sec.attorney) return;
+      if(sec.none && S.data[sec.none]){
+        out.push({sub:sec.title}); out.push({label:sec.title, value:'None', muted:true});
+        return;
+      }
+      const before = out.length;
+      const rows = [];
+      ovRows(sec.fields, {base:'', item:S.data}, rows, '');
+      if(sec.totalId && S.data[sec.totalId])
+        rows.push({label:'Category total', value:money(num(S.data[sec.totalId])), strong:true});
+      else if(sec.totalFn && sec.totalFn(S.data))
+        rows.push({label:'Category total', value:money(sec.totalFn(S.data)), strong:true});
+      if(rows.some(r=>r.sub || (r.value!=='' && r.value!=null))){
+        if(sec.title) out.push({sub:sec.title});
+        rows.forEach(r=>out.push(r));
+      } else { out.length = before; }
+    });
+  });
+  return out;
+}
+
+function renderOfficeView(){
+  const showBlanks = !!S.ovBlanks;
+  let out = `<div class="callout info no-print"><b>Office view.</b> The same answers, reordered the way
+    the schedules ask for them, with a copy button beside each value. Toggle blanks on to see what the
+    client left empty.
+    <label style="display:inline-flex;gap:7px;align-items:center;margin-left:14px;cursor:pointer">
+      <input type="checkbox" id="ovBlanks"${showBlanks?' checked':''} style="accent-color:var(--navy)">
+      Show blank fields</label></div>`;
+
+  OFFICE_ORDER.forEach(grp=>{
+    if(grp.onlyAttorney && !BUILD.attorneyMode) return;
+    const rows = ovGroupRows(grp);
+    const shown = rows.filter(r => r.sub || showBlanks || (r.value!=='' && r.value!=null));
+    const hasValues = shown.some(r=>!r.sub && !r.strong && r.value!=='' && r.value!=null);
+    if(!hasValues) return;
+
+    const plain = shown.filter(r=>!r.sub && r.value)
+                       .map(r=>`${r.label}: ${r.value}`).join('\n');
+    out += `<div class="ov-grp"><h3>${esc(grp.title)}
+      <button type="button" class="cpall" data-copyall="${esc(plain)}">Copy section</button></h3>`;
+    if(grp.note) out += `<div class="ov-note">${esc(grp.note)}</div>`;
+    out += '<table class="ov">';
+    shown.forEach(r=>{
+      if(r.sub){ out += `<tr><td colspan="3" class="ov-sub">${esc(r.sub)}</td></tr>`; return; }
+      const blank = (r.value==='' || r.value==null);
+      out += `<tr><td class="k">${esc(r.label)}</td>`+
+             `<td class="v${blank?' blank':''}"${r.strong?' style="color:var(--navy)"':''}>${blank?'not answered':esc(r.value)}</td>`+
+             `<td class="c">${blank?'':`<button type="button" class="cpbtn" data-copy="${esc(r.value)}">copy</button>`}</td></tr>`;
+    });
+    out += '</table></div>';
+  });
+  return out;
+}
+
+/* ---------- clipboard, with a fallback for non-secure contexts ---------- */
+function copyText(text, btn){
+  const done = ()=>{
+    if(!btn) return;
+    const old = btn.textContent;
+    btn.textContent = 'copied'; btn.classList.add('done');
+    setTimeout(()=>{ btn.textContent = old; btn.classList.remove('done'); }, 1200);
+  };
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(done).catch(()=>fallback());
+  } else fallback();
+
+  function fallback(){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-1000px;left:-1000px';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); done(); }catch(e){}
+    ta.remove();
+  }
+}
+
+document.addEventListener('click', ev=>{
+  const c = ev.target.closest('[data-copy]');
+  if(c){ copyText(c.getAttribute('data-copy'), c); return; }
+  const a = ev.target.closest('[data-copyall]');
+  if(a){ copyText(a.getAttribute('data-copyall'), a); return; }
+  const j = ev.target.closest('[data-jump]');
+  if(j){ jumpToField(+j.getAttribute('data-step'), j.getAttribute('data-jump')); return; }
+  const t = ev.target.closest('[data-ovmode]');
+  if(t){ S.officeView = t.getAttribute('data-ovmode')==='office'; renderStep(); return; }
+});
+document.addEventListener('change', ev=>{
+  if(ev.target && ev.target.id==='ovBlanks'){ S.ovBlanks = ev.target.checked; renderStep(); }
+});
+/* ============================================================
+   SEND TO THE OFFICE
+   On a phone this hands the finished file straight to the share
+   sheet with the file already attached — one tap, no hunting in
+   Downloads. On a computer it downloads the file and opens a
+   pre-addressed email, because browsers will not let a web page
+   attach a file to mail on its own.
+   ============================================================ */
+
+function canShareFiles(file){
+  try{ return !!(navigator.canShare && navigator.share && navigator.canShare({files:[file]})); }
+  catch(e){ return false; }
+}
+
+function clientLabel(){
+  return S.data.clientName || [S.data.d_First,S.data.d_Last].filter(Boolean).join(' ') || 'client';
+}
+
+function mailtoLink(name){
+  const subject = `Bankruptcy questionnaire — ${clientLabel()}`;
+  const body =
+    `My completed questionnaire is attached.\n\n` +
+    `File name: ${name}\n` +
+    `(The file has just been downloaded to this device — please attach it before sending.)\n\n` +
+    `${clientLabel()}\n`;
+  return `mailto:${FIRM.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+/* navigator.share must run inside the click that triggered it, so the
+   button's handler calls it directly — no awaits in front of it. */
+function shareSheet(file, locked){
+  return new Promise(resolve=>{
+    const bg = document.createElement('div');
+    bg.className = 'modal-bg';
+    bg.innerHTML = `<div class="modal"><h3>Send to ${esc(FIRM.name)}</h3>
+      <div class="mbody">
+        <p>Tap below and choose how to send — mail, messages, whichever you use.
+           Your answers are already attached as <b>${esc(file.name)}</b>.</p>
+        <p>Send it to <b>${esc(FIRM.email)}</b>.</p>
+        ${locked ? `<p class="lockprompt"><b>Remember:</b> call us on ${esc(FIRM.phone)} with the
+           password. Do not put it in the same message as the file.</p>` : ''}
+        <div class="merr" id="mErr"></div>
+      </div>
+      <div class="mfoot">
+        <button type="button" class="btn gold" id="btnShareNow">Choose how to send</button>
+        <button type="button" class="btn" id="btnShareCancel">Back</button>
+      </div></div>`;
+    document.body.appendChild(bg);
+
+    bg.querySelector('#btnShareNow').addEventListener('click', function(){
+      navigator.share({ files:[file],
+                        title:`Bankruptcy questionnaire — ${clientLabel()}`,
+                        text:`Completed questionnaire for ${clientLabel()}.` })
+        .then(()=>{ bg.remove(); resolve('shared'); })
+        .catch(err=>{
+          if(err && err.name==='AbortError'){ return; }         /* they backed out of the sheet */
+          bg.querySelector('#mErr').textContent =
+            'This device would not open the share menu. Use “Back”, then save the file and email it.';
+        });
+    });
+    bg.querySelector('#btnShareCancel').addEventListener('click', ()=>{ bg.remove(); resolve('cancel'); });
+  });
+}
+
+async function doSend(){
+  const r = await buildSaveBlob();
+  if(!r) return;
+
+  const file = new File([r.blob], r.name, {type:'application/json'});
+
+  if(canShareFiles(file)){
+    const outcome = await shareSheet(file, r.locked);
+    if(outcome==='shared'){
+      markSaved('Sent — ' + r.name);
+      await modal({ title:'On its way',
+        body:`<p>Your questionnaire has been handed to your mail or messaging app. Check that it
+              actually sent — some apps leave it sitting in a draft.</p>
+              ${r.locked?`<p><b>Now call ${esc(FIRM.phone)} with the password.</b></p>`:''}`,
+        buttons:[{label:'Done', cls:'gold', value:null}]});
+      return;
+    }
+    if(outcome==='cancel') return;
+  }
+
+  /* Desktop: download, then open a pre-addressed email. */
+  downloadBlob(r.blob, r.name);
+  markSaved(r.name + (r.locked?'  \u{1F512}':''));
+
+  const go = await modal({
+    title:'Two quick steps',
+    body:`<p><b>1.</b> Your file has just downloaded:<br>
+            <code style="font-size:13px">${esc(r.name)}</code><br>
+            <span style="font-size:12.5px;color:var(--ink-3)">Look in your Downloads folder.</span></p>
+          <p><b>2.</b> We will open an email to <b>${esc(FIRM.email)}</b> — attach that file to it and send.</p>
+          ${r.locked?`<p class="lockprompt"><b>Then call ${esc(FIRM.phone)} with the password.</b>
+            Do not put it in the same email.</p>`:''}`,
+    buttons:[
+      {label:'Open my email', cls:'gold', value:'mail'},
+      {label:'I will send it myself', value:null}
+    ]
+  });
+  if(go==='mail'){
+    const a = document.createElement('a');
+    a.href = mailtoLink(r.name);
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+}
+
+/* the card that appears on the review page */
+function renderSendCard(){
+  const blanks = auditBlanks().length;
+  return `<div class="sendcard no-print">
+    <div class="sc-text">
+      <h3>Send your answers to ${esc(FIRM.name)}</h3>
+      <p>${blanks
+        ? `There ${blanks===1?'is':'are'} still <b>${blanks}</b> blank ${blanks===1?'answer':'answers'} above.
+           You can send anyway, but we will have to come back to you for them.`
+        : `Everything that applies to you has been answered.`}
+        On a phone this opens your normal share menu with the file already attached.
+        On a computer the file downloads and your email opens.</p>
+    </div>
+    <button type="button" class="btn gold sc-btn" id="btnSend">Send to the office</button>
+  </div>`;
+}
+
+document.addEventListener('click', ev=>{
+  if(ev.target && ev.target.id==='btnSend') doSend();
+});
 
 </script>
 </body>
