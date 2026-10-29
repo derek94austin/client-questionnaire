@@ -88,20 +88,19 @@ creditor named, a joint filing with an empty spouse page, no creditors at
 all). "Do not leave blanks" is the instruction on page 1 of the paper packet;
 this is that instruction, enforced.
 
-**Password-protected files.** When a client saves, they are offered a
-password. If they take it, the answers are encrypted in their own browser
-before the file is written — AES-GCM 256, key stretched with PBKDF2-SHA256
-over 310,000 rounds. The file that lands in their Downloads folder contains no
-readable Social Security number. An intercepted email attachment is useless
-without the password, which the client gives the office **by phone, never in
-the same email as the file**.
+**Saving and printing.** **Save my answers** downloads a single `.json` file
+immediately — no password step. The file is plain text: it holds Social Security
+numbers, dates of birth and account numbers, so it is ordinary client data and
+belongs in the matter file, not in email any longer than it has to be.
 
-There is no recovery. If the password is lost the file cannot be opened, by
-anyone. The client is told this before they choose one. Saving without a
-password stays available for clients who would struggle with it.
+Files saved by an earlier version of this form carry a `.slq` extension and are
+encrypted. **Open saved file** still unlocks those with the password that was set
+at the time — the form can read them, it just no longer creates them.
 
-Encrypted files are named `.slq`; unprotected ones stay `.json`. Both open
-through **Open saved file**.
+**Download PDF** in the header jumps to the review page and opens the print
+dialog; choosing *Save as PDF* as the destination gives the client a copy for
+their records. The printed version is the answers only — the completeness check
+and the copy buttons are screen tools and are suppressed in print.
 
 **Sending it in.** The review page ends with a **Send to the office** button.
 On a phone it hands the finished file straight to the share sheet with the
@@ -122,6 +121,37 @@ of Financial Affairs. Every value has a copy button, each section has a
 "copy section" button, and a checkbox reveals what the client left empty.
 It does not eliminate re-keying into Jubilee, but it makes it a great deal
 faster and harder to get wrong.
+
+---
+
+## Statement of Financial Affairs
+
+The SOFA section follows **Official Form 107**, Parts 1 through 12, questions 1
+to 28, in the official order and wording, so answers transfer to the filed form
+line for line. It is split across four pages of the questionnaire:
+
+| Page | Covers | Questions |
+|---|---|---|
+| Income & Past Addresses | Parts 1–2 | 1–5 |
+| Payments & Lawsuits | Parts 3–4 | 6–12 |
+| Gifts & Transfers | Parts 5–7 | 13–19 |
+| Accounts & Business | Parts 8–12 | 20–28 |
+
+Each question is a No / Yes pair; answering **Yes** opens the detail table
+underneath it, exactly as the official form does. Part 12 shows the perjury
+warning and asks the non-attorney-preparer question; the client signs the real
+Form 107 at the office.
+
+**Dollar amounts.** Question 6 carries the §547(c)(9) threshold, **$8,575** for
+cases filed on or after 01 April 2025. It is adjusted every three years — the
+next adjustment is due 01 April 2028. Search `8,575` in `index.html`; it appears
+in the question text and in the hint beneath it.
+
+An earlier version of this questionnaire used the superseded Form 7 numbering
+(questions 1–17). Files saved against that version still open: `migrateData()`
+carries the sixteen answers that map one-to-one onto Form 107 and leaves the
+rest in the file untouched, so nothing is lost even where a person has to
+re-key it.
 
 ---
 

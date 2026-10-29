@@ -152,7 +152,9 @@ table.ov td.c{width:34px;text-align:right;padding:3px 8px 3px 0}
 .cpbtn:hover{border-color:var(--navy-3);color:var(--navy)}
 .cpbtn.done{background:var(--ok-bg);border-color:#bfe0cf;color:var(--ok)}
 .ov-note{padding:9px 13px;font-size:12.5px;color:var(--ink-3);font-style:italic}
-@media print{ .ov-toggle,.cpbtn,.ov-grp > h3 .cpall,.audit-item{display:none !important} }
+/* the completeness check and the copy buttons are working tools for the screen —
+   a printed or saved PDF should be the answers and nothing else */
+@media print{ .ov-toggle,.cpbtn,.ov-grp > h3 .cpall,.audit,.audit-item{display:none !important} }
 
 /* ---------- Layout ---------- */
 .wrap{max-width:1400px;margin:0 auto;padding:20px 18px 120px;display:grid;grid-template-columns:270px 1fr;gap:24px;width:100%}
@@ -284,7 +286,7 @@ main.main{min-width:0}
 
 /* checklist-with-value rows (household goods) */
 .hg{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:4px 18px}
-.hg-row{display:grid;grid-template-columns:18px 1fr 84px 96px;gap:8px;align-items:center;padding:4px 6px;border-radius:5px}
+.hg-row{display:grid;grid-template-columns:1fr 84px 96px;gap:8px;align-items:center;padding:4px 6px;border-radius:5px}
 .hg-row:hover{background:var(--panel-2)}
 .hg-row input[type=checkbox]{accent-color:var(--navy);width:16px;height:16px;margin:0}
 .hg-row .hl{font-size:13.5px;line-height:1.25}
@@ -370,7 +372,7 @@ body.attorney .attorney-only{display:block}
   .dual .dcell::before{content:attr(data-who);display:block;font-size:10.5px;text-transform:uppercase;
     letter-spacing:.07em;color:var(--ink-3);font-weight:700;margin-bottom:3px}
   .dual-total{grid-template-columns:1fr}
-  .hg-row{grid-template-columns:18px 1fr 78px 90px}
+  .hg-row{grid-template-columns:1fr 78px 90px}
 }
 @media (max-width:700px){
   .savebar-in > span:last-child{display:none}
@@ -413,7 +415,7 @@ body.attorney .attorney-only{display:block}
       </div>
       <div class="top-actions">
         <button class="btn ghost sm" id="btnLoad">Open saved file</button>
-        <button class="btn ghost sm" id="btnPrint">Print / PDF</button>
+        <button class="btn ghost sm" id="btnPrint">Download PDF</button>
         <button class="btn gold" id="btnSave">Save my answers</button>
         <input type="file" id="fileIn" accept=".json,.slq,application/json" style="display:none">
       </div>
@@ -488,7 +490,7 @@ const RAD = (id,l,opts,w,o) => ({t:'rad',  id,l, opts, w:w||12,...o});
 const CKS = (id,l,opts,w,o) => ({t:'cks',  id,l, opts, w:w||12,...o});
 const CK  = (id,l,w,o)      => ({t:'ck',   id,l, w:w||12,...o});
 const H   = (l,o)           => ({t:'h', l, ...o});
-const NOTE= (l,k)           => ({t:'note', l, k:k||'info'});
+const NOTE= (l,k,o)         => ({t:'note', l, k:k||'info', ...o});
 const PCT = (id,l,w,o)      => ({t:'text', id,l, w:w||2, sfx:'%', ...o});
 const MO  = (id,l,w,o)      => ({t:'money',id,l, w:w||3, sfx:'/mo', ...o});
 
@@ -528,7 +530,7 @@ const PERSON = (p, who, isJoint) => ([
   T(p+'First','First Name',4), T(p+'Middle','Middle Name',4), T(p+'Last','Last Name',4),
   SEL(p+'Suffix','Suffix',['','Jr.','Sr.','II','III','IV'],2),
   T(p+'OtherNames','Other names used within the last 8 years',10,
-    {hint:'Maiden names, married names, nicknames used on accounts, DBAs. Write "None" if none.'}),
+    {hint:'Maiden names, married names, nicknames used on accounts, DBAs. <b>Separate each name with a semicolon</b> — for example: Jane Smith; Jane A. Doe; Janie Doe. Write "None" if none.'}),
   T(p+'SSN','Social Security Number',4,{hint:'List all if you have more than one.'}),
   H('Where '+(isJoint?'they live':'you live')),
   T(p+'Addr','Street address',7), T(p+'Apt','Apt. No.',2), T(p+'City','City',3),
@@ -542,9 +544,15 @@ const PERSON = (p, who, isJoint) => ([
   ST(p+'MailState','Mailing address — State',2,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
   T(p+'MailZip','Mailing address — ZIP',2,{showIf:(d,it)=>it[p+'MailDiff']==='Yes'}),
   H('How to reach '+(isJoint?'them':'you')),
-  TEL(p+'Home','Home Telephone',3), TEL(p+'Work','Work Telephone',3),
-  TEL(p+'Cell','Cellular Telephone',3), EM(p+'Email','E-mail Address',3),
-  RAD(p+'BestNum','Best number to contact',['Home','Work','Cellular'],6),
+  TEL(p+'Cell','Cell phone number',4),
+  ...(isJoint ? [] : [TEL(p+'SpouseCell','Spouse cell phone number',4,
+      {hint:'Leave blank if you are not married.'})]),
+  TEL(p+'OtherCell','Other cell phone number',4,
+    {hint:'Any other number we can reach ' + (isJoint?'them':'you') + ' on.'}),
+  EM(p+'Email','Primary email address',6),
+  EM(p+'Email2','Other email address',6),
+  RAD(p+'BestNum','Best number to contact',
+    isJoint ? ['Cell','Other cell'] : ['Cell','Spouse cell','Other cell'], 6),
   T(p+'BestTime','Best time to contact',3,{hint:'e.g. 9:00 AM – noon'}),
   YN(p+'EmailOK','Can you receive communications by e-mail?',6),
   H('Background'),
@@ -711,7 +719,7 @@ STEPS.push({
 
     {idx:4, title:'Household goods and furnishings', none:'pp4None',
      noneLabel:'None — I own no household goods',
-     note:'Check each item you own and give a used garage-sale value. Do not list replacement cost.',
+     note:'Give a used garage-sale value for each item you own and leave the rest blank &mdash; the total adds itself up as you type. Do not list replacement cost.',
      fields:[ {t:'hg', id:'hg', items:HG_ITEMS} ],
      totalFn: d => sumHG(d)}
   ]
@@ -836,12 +844,17 @@ STEPS.push({
   intro:'Money you are owed or may become entitled to, plus intangible property. Answer honestly — undisclosed claims are the most common reason a case goes wrong.',
   sections:[
     {idx:18, title:'Other liquidated debts including tax refunds', none:'pp18None', noneLabel:'None',
-     note:'List all refunds you are expecting, including back pay and commissions.',
+     note:'List all refunds you are expecting, including back pay and commissions. Use <b>Add another item</b> for as many as you need.',
      fields:[
-      T('pp18Item','Tax refund / item',6), M('pp18Val','Cash value',3), T('pp18Due','Due date',3),
+      {t:'rep', id:'pp18', l:'Item', min:1, addLabel:'Add another item',
+       summary:it=>it.p18Item||'', fields:[
+        T('p18Item','Tax refund / item owed to you',6),
+        M('p18Val','Cash value',3),
+        T('p18Due','Due date',3)
+      ]},
       YN('pp18Wages','Are you owed back wages, commissions or vacation pay from your current or previous employer?',12),
       TA('pp18X','If yes, explain',12,{showIf:d=>d.pp18Wages==='Yes'})
-     ], totalFn: d => num(d.pp18Val)},
+     ], totalFn: d => sumRep(d,'pp18','p18Val')},
 
     {idx:19, title:'Equitable or future interests, life estates', none:'pp19None', noneLabel:'None',
      fields:[
@@ -936,8 +949,29 @@ STEPS.push({
 /* ---------- 10. Business, farm & other property (28–35) ---------- */
 STEPS.push({
   id:'pp5', title:'Business, Farm & Other Property', eyebrow:'Assets',
-  intro:'Property used in a business or farm, animals, and anything not already listed.',
+  intro:'Business interests, property used in a business or farm, animals, and anything not already listed.',
   sections:[
+    {title:'Business entities you own or part-own', none:'bizNone',
+     noneLabel:'None — I am not an owner or part owner of any business entity',
+     note:'List every LLC, S-corporation, C-corporation or closely held corporation in which you are an owner or part owner — <b>including ones that are inactive, dissolved or never made money</b>. These must be disclosed even if the business has no value.',
+     fields:[
+      {t:'rep', id:'bizEntities', l:'Business', min:1, addLabel:'Add another business',
+       summary:it=>it.beName||'', fields:[
+        T('beName','Name of the LLC / corporation',7),
+        SEL('beType','Type of entity',
+          ['','LLC','S-corporation','C-corporation','Closely held corporation',
+           'Partnership','Sole proprietorship (DBA)','Other'],5),
+        ST('beState','State where it was formed',2),
+        PCT('bePct','Your ownership percentage',2),
+        T('beRole','Your role (member, officer, shareholder, etc.)',4),
+        T('beEIN','EIN / tax ID, if you have one',4),
+        RAD('beActive','Is the business currently operating?',
+          ['Operating','Inactive but still registered','Dissolved / closed'],7),
+        M('beValue','Estimated value of your interest',3,
+          {hint:'Enter 0 if you believe it is worthless — do not leave this blank.'})
+      ]}
+     ]},
+
     {idx:28, title:'Office equipment, furnishings and supplies', none:'pp28None', noneLabel:'None',
      fields:[
       {t:'rep', id:'office', l:'Item', min:1, addLabel:'Add another item',
@@ -1038,32 +1072,16 @@ STEPS.push({
       ]}
      ]},
     {title:'Child support', fields:[
-      YN('csSupport','Are you currently providing any financial support for children not living with you?',12,{rerender:true}),
-      RAD('csTo','Do you make payments to an individual, or to a state / local child welfare agency?',
-        ['Individual','State / local child welfare agency','Both'],12,
-        {showIf:d=>d.csSupport==='Yes', rerender:true}),
+      YN('csSupport','Do you pay child support?',12,{rerender:true}),
+      ST('csOrderState','Which state issued the child support order?',3,
+        {showIf:d=>d.csSupport==='Yes'}),
+      T('csIndName','Name of the parent who receives the support',6,
+        {showIf:d=>d.csSupport==='Yes'}),
       RAD('csStatus','Are you current on your child support obligations, or are you behind in payments?',
-        ['Current','Behind in payments'],12,{showIf:d=>d.csSupport==='Yes'})
-    ]},
-    {title:'Individual (parent of child)',
-     showIf:d=>d.csSupport==='Yes' && (d.csTo==='Individual'||d.csTo==='Both'),
-     fields:[
-      T('csIndName','Name of parent',6), T('csIndAddr','Address of parent',6),
-      T('csIndCity','City',4), ST('csIndState','State',2), T('csIndZip','ZIP',2),
-      M('csIndOwed','Total amount owed',3), T('csIndYear','Year began',2),
-      YN('csIndOrder','Is there a court order?',5),
-      T('csIndCase','Case number',4,{showIf:d=>d.csIndOrder==='Yes'}),
-      T('csIndDistrict','District and state where case was filed',6,{showIf:d=>d.csIndOrder==='Yes'})
-    ]},
-    {title:'State / local child welfare agency',
-     showIf:d=>d.csSupport==='Yes' && (d.csTo==='State / local child welfare agency'||d.csTo==='Both'),
-     fields:[
-      T('csAgName','Name of agency',6), T('csAgAddr','Address of agency',6),
-      T('csAgCity','City',4), ST('csAgState','State',2), T('csAgZip','ZIP',2),
-      M('csAgOwed','Total amount owed',3), T('csAgYear','Year began',2),
-      YN('csAgOrder','Is there a court order?',5),
-      T('csAgCase','Case number',4,{showIf:d=>d.csAgOrder==='Yes'}),
-      T('csAgDistrict','State and district where case was filed',6,{showIf:d=>d.csAgOrder==='Yes'})
+        ['Current','Behind in payments'],12,
+        {showIf:d=>d.csSupport==='Yes', rerender:true}),
+      M('csArrears','If behind — approximately how much is past due?',4,
+        {showIf:d=>d.csSupport==='Yes' && d.csStatus==='Behind in payments'})
     ]}
   ]
 });
@@ -1097,18 +1115,6 @@ const INC_ROWS = [
   ['incOther1','Other', 'incOther1Label'],
   ['incOther2','Other', 'incOther2Label']
 ];
-const PAY_ROWS = [
-  ['payGross','Gross pay before deductions'],
-  ['payOvertime','Overtime / bonuses / commissions (average)'],
-  ['dedTax','Payroll deduction — payroll taxes & social security'],
-  ['dedIns','Payroll deduction — insurance'],
-  ['dedMedical','Payroll deduction — medical / HSA'],
-  ['dedUnion','Payroll deduction — union dues'],
-  ['dedRetire','Payroll deduction — retirement / 401(k)'],
-  ['dedSupport','Payroll deduction — child support / garnishment'],
-  ['dedOther','Payroll deduction — other'],
-  ['payNet','NET take-home pay']
-];
 
 STEPS.push({
   id:'income', title:'Your Monthly Income', eyebrow:'Finances',
@@ -1124,14 +1130,11 @@ STEPS.push({
       {t:'dual', id:'empFreq', l:'Pay frequency', kind:'sel',
         opts:['','Weekly','Bi-weekly','2x per month','Monthly']}
     ]},
-    {title:'Pay and payroll deductions',
-     note:'Monthly figures. These eleven lines were redacted in the original PDF, so we have used the standard payroll breakdown — tell us if your firm uses different line items.',
+    {title:'Monthly income',
+     note:'Monthly figures. For take-home pay, use what actually lands in the account after every deduction — we will get the deduction detail from your pay stubs.',
      fields:[
       {t:'dualhead'},
-      ...PAY_ROWS.map(r=>({t:'dual', id:r[0], l:r[1], kind:'money'}))
-    ]},
-    {title:'Other monthly income', fields:[
-      {t:'dualhead'},
+      {t:'dual', id:'payNet', l:'Take-home pay from employment, after all deductions', kind:'money'},
       ...INC_ROWS.map(r=>({t:'dual', id:r[0], l:r[1], kind:'money', labelField:r[2]||null})),
       {t:'dualtotal', l:'TOTAL MONTHLY INCOME',
         fnA:d=>incTotal(d,'_d'), fnB:d=>incTotal(d,'_s')}
@@ -1186,33 +1189,73 @@ const EXP_ROWS = [
   ['expSchoolLunch','School lunch expenses'],
   ['expTuition','College tuition'],
   ['expStudentLoan','Student loan payments'],
-  ['expOther1','Other','expOther1Label'],
-  ['expOther2','Other','expOther2Label']
+  ['__OTHER__','']
 ];
+
+/* How many "Other" expense rows to show. Starts at 2 and grows by one every
+   time the client presses "+ Add another expense"; the count rides along in
+   the saved file so reopening it shows the same rows. */
+const EXP_OTHER_MIN = 2, EXP_OTHER_MAX = 40;
+function expOtherCount(d){
+  const n = Math.floor(+(d||{}).expOtherN);
+  if(!isFinite(n) || n < EXP_OTHER_MIN) return EXP_OTHER_MIN;
+  return Math.min(n, EXP_OTHER_MAX);
+}
+
+/* Built fresh on every render (see the getter below) so the row count can grow. */
+function buildExpenseFields(){
+  const out = [{t:'dualhead', a:'Debtor or joint expenses', b:'Spouse, if residing separately'}];
+  EXP_ROWS.forEach(r=>{
+    if(r[0]==='__RETAX__'){
+      out.push(YN('expRETaxInc','Are real estate taxes included in your mortgage payment?',12,{rerender:true,inline:true}));
+      out.push({t:'dual', id:'expRETax', l:'If no — real estate taxes', kind:'money',
+        wa:'Debtor / joint', wb:'Spouse (if separate)', showIf:d=>d.expRETaxInc==='No'});
+      return;
+    }
+    if(r[0]==='__HOMEINS__'){
+      out.push(YN('expHomeInsInc','Is home insurance included in your mortgage payment?',12,{rerender:true,inline:true}));
+      out.push({t:'dual', id:'expHomeIns', l:'If no — home insurance', kind:'money',
+        wa:'Debtor / joint', wb:'Spouse (if separate)', showIf:d=>d.expHomeInsInc==='No'});
+      return;
+    }
+    if(r[0]==='__OTHER__'){
+      /* S is declared further down, so it is still in the temporal dead zone
+         when the schema is first built — reading it then throws, not undefined */
+      let _d=null; try{ _d=S.data; }catch(e){}
+      const n = expOtherCount(_d);
+      for(let i=1;i<=n;i++){
+        out.push({t:'dual', id:'expOther'+i, l:'Other', kind:'money',
+          labelField:'expOther'+i+'Label', wa:'Debtor / joint', wb:'Spouse (if separate)'});
+      }
+      if(n < EXP_OTHER_MAX) out.push({t:'addrow', target:'expOtherN', l:'Add another expense'});
+      return;
+    }
+    out.push({t:'dual', id:r[0], l:r[1], kind:'money', labelField:r[2]||null,
+      wa:'Debtor / joint', wb:'Spouse (if separate)'});
+  });
+  out.push({t:'dualtotal', l:'TOTAL MONTHLY EXPENSES',
+    fnA:d=>expTotal(d,'_d'), fnB:d=>expTotal(d,'_s')});
+  return out;
+}
+
+/* Rewrite the live Expense list in place. Mutating the existing array rather
+   than replacing it keeps every reference valid — stripAttorney() copies the
+   section object at startup, so a fresh array or a getter would be stranded. */
+function syncExpenseRows(){
+  const st = STEPS.find(s=>s.id==='expenses');
+  if(!st) return;
+  const sec = st.sections.find(x=>x.title==='Expense list');
+  if(!sec || !Array.isArray(sec.fields)) return;
+  const next = buildExpenseFields();
+  sec.fields.length = 0;
+  for(const f of next) sec.fields.push(f);
+}
 
 STEPS.push({
   id:'expenses', title:'Your Monthly Expenses', eyebrow:'Finances',
   intro:'Average monthly amounts. Use the second column only if your spouse lives separately from you.',
   sections:[
-    {title:'Expense list', fields:[
-      {t:'dualhead', a:'Debtor or joint expenses', b:'Spouse, if residing separately'},
-      ...EXP_ROWS.flatMap(r=>{
-        if(r[0]==='__RETAX__') return [
-          YN('expRETaxInc','Are real estate taxes included in your mortgage payment?',12,{rerender:true,inline:true}),
-          {t:'dual', id:'expRETax', l:'If no — real estate taxes', kind:'money',
-            wa:'Debtor / joint', wb:'Spouse (if separate)', showIf:d=>d.expRETaxInc==='No'}
-        ];
-        if(r[0]==='__HOMEINS__') return [
-          YN('expHomeInsInc','Is home insurance included in your mortgage payment?',12,{rerender:true,inline:true}),
-          {t:'dual', id:'expHomeIns', l:'If no — home insurance', kind:'money',
-            wa:'Debtor / joint', wb:'Spouse (if separate)', showIf:d=>d.expHomeInsInc==='No'}
-        ];
-        return [{t:'dual', id:r[0], l:r[1], kind:'money', labelField:r[2]||null,
-                 wa:'Debtor / joint', wb:'Spouse (if separate)'}];
-      }),
-      {t:'dualtotal', l:'TOTAL MONTHLY EXPENSES',
-        fnA:d=>expTotal(d,'_d'), fnB:d=>expTotal(d,'_s')}
-    ]},
+    {title:'Expense list', fields: buildExpenseFields()},
     {title:'Monthly summary', fields:[
       {t:'grandtotal', l:'Income minus expenses (debtor / joint)',
         fn:d=>incTotal(d,'_d')-expTotal(d,'_d'), allowNegative:true}
@@ -1253,206 +1296,475 @@ STEPS.push({
                      checklist, disclaimer, review
    ============================================================ */
 
-const FA_YEARS = [['ytd','Year to date (Jan 1 to present)'],
-                  ['ly','Last year (Jan 1 to Dec 31)'],
-                  ['yb','Year before (Jan 1 to Dec 31)']];
-const FA_ROWS  = [['deb','Debtor'],['sp','Spouse']];
+/* ============================================================
+   STATEMENT OF FINANCIAL AFFAIRS — Official Form 107 (rev. 04/22,
+   dollar amounts as adjusted 04/01/2025).
+   Question numbers and wording follow the official form so answers
+   transfer line-for-line. Parts 1-11 are below; Part 12 is the
+   signature, which the client signs on the real form at the office.
+   ============================================================ */
 
+const SOFA_Y  = new Date().getFullYear();
+const JOINT   = d => d.filingType === 'Filing jointly with my spouse';
+const CP_NOTE = 'Community property states and territories are Arizona, California, Idaho, '+
+                'Louisiana, Nevada, New Mexico, Puerto Rico, Texas, Washington and Wisconsin.';
+const INSIDER_NOTE =
+  '<b>Insiders</b> include your relatives; any general partners; relatives of any general partners; '+
+  'partnerships of which you are a general partner; corporations of which you are an officer, director, '+
+  'person in control, or owner of 20% or more of their voting securities; and any managing agent, '+
+  'including one for a business you operate as a sole proprietor. 11 U.S.C. &sect; 101. '+
+  'Include payments for domestic support obligations, such as child support and alimony.';
+
+/* name + address, used by most of the Form 107 detail tables */
+const SOFA_ADDR = (p, label) => ([
+  T(p+'Name', label, 6), T(p+'Addr','Number and street',6),
+  T(p+'City','City',4), ST(p+'State','State',2), T(p+'Zip','ZIP Code',2)
+]);
+
+/* a Form 107 "No / Yes. Fill in the details." question */
+const SOFA_Q = (id, label, opts) => YN(id, label, 12, {rerender:true, ...opts});
+const IFYES  = id => (d => d[id] === 'Yes');
+
+/* ---------- SOFA 1 : Parts 1-2, questions 1-5 ---------- */
 STEPS.push({
-  id:'affairs1', title:'Your Financial Affairs (1–5)', eyebrow:'Statement of Financial Affairs',
-  intro:'These questions cover the last few years of your financial history. Check “None” where a question does not apply.',
+  id:'affairs1', title:'Financial Affairs — Income & Past Addresses',
+  eyebrow:'Statement of Financial Affairs · Parts 1–2',
+  intro:'These questions come straight from Official Form 107, the Statement of Financial Affairs. Answer every one — "No" is an answer, a blank is not.',
   sections:[
-    {title:'Question 1A — Gross annual income from employment', none:'q1aNone', noneLabel:'None',
-     fields:[{t:'mtx', id:'q1a', months:FA_YEARS, rows:FA_ROWS}]},
+    {title:'Part 1 · Question 1 — Your marital status', fields:[
+      RAD('sofa1Marital','What is your current marital status?',['Married','Not married'],12)
+    ]},
 
-    {title:'Question 1B — Gross annual income from the operation of a business',
-     none:'q1bNone', noneLabel:'None',
-     fields:[{t:'mtx', id:'q1b', months:FA_YEARS, rows:FA_ROWS}]},
+    {title:'Part 1 · Question 2 — Where you lived before', fields:[
+      SOFA_Q('sofa2','During the last 3 years, have you lived anywhere other than where you live now?'),
+      NOTE('List all of the places you lived in the last 3 years. <b>Do not include where you live now.</b>','info',
+        {showIf:IFYES('sofa2')}),
+      {t:'rep', id:'sofa2List', l:'Previous address', min:1, addLabel:'Add another address',
+       showIf:IFYES('sofa2'),
+       summary:it=>it.s2Addr||'', fields:[
+        SEL('s2Who','Who lived there?',['','Debtor 1','Debtor 2','Both'],3),
+        T('s2Addr','Number and street',6), T('s2City','City',3),
+        ST('s2State','State',2), T('s2Zip','ZIP Code',2),
+        T('s2From','Lived there from',3,{hint:'mm/yyyy'}),
+        T('s2To','to',3,{hint:'mm/yyyy'})
+      ]}
+    ]},
 
-    {title:'Question 2 — Gross annual income from any source other than employment or operation of a business',
-     none:'q2None', noneLabel:'None',
-     fields:[ T('q2Source','Source',6), {t:'mtx', id:'q2', months:FA_YEARS, rows:FA_ROWS} ]},
+    {title:'Part 1 · Question 3 — Community property', fields:[
+      SOFA_Q('sofa3','Within the last 8 years, did you ever live with a spouse or legal equivalent in a community property state or territory?'),
+      NOTE(CP_NOTE,'info'),
+      NOTE('If yes, <i>Schedule H: Your Codebtors</i> (Official Form 106H) must also be completed — we will handle that.','info',
+        {showIf:IFYES('sofa3')}),
+      T('sofa3Spouse','Name of the spouse or legal equivalent you lived with',6,{showIf:IFYES('sofa3')}),
+      T('sofa3Where','Which state or territory, and when',6,{showIf:IFYES('sofa3')})
+    ]},
 
-    {title:'Question 3A — Payments over $600 to any one creditor within the past 90 days',
-     none:'q3aNone', noneLabel:'None',
-     note:'All payments on loans, purchases of goods, and other debts of more than $600 to any one creditor made within the past 90 days.',
-     fields:[{t:'rep', id:'q3a', l:'Payment', min:1, addLabel:'Add another payment',
-       summary:it=>it.q3aCred||'', fields:[
-        T('q3aCred','Creditor',6), T('q3aAddr','Address',6),
-        T('q3aCity','City',4), ST('q3aState','State',2), T('q3aZip','ZIP',2),
-        T('q3aDates','Dates of payment',4), M('q3aAmt','Amount of payment',3), M('q3aBal','Balance due',3)
-     ]}]},
+    {title:'Part 2 · Question 4 — Income from employment or operating a business',
+     note:'Fill in the total amount of income you received from all jobs and all businesses, including part-time activities. If you are filing a joint case and you have income that you receive together, list it only once under Debtor 1. This is <b>gross</b> income, before deductions and exclusions.',
+     fields:[
+      SOFA_Q('sofa4','Did you have any income from employment or from operating a business during this year or the two previous calendar years?'),
 
-    {title:'Question 3B — Payments to insiders in the last 12 months',
-     none:'q3bNone', noneLabel:'None',
-     note:'All payments made to RELATIVES within the last 12 months prior to this filing.',
-     fields:[{t:'rep', id:'q3b', l:'Payment', min:1, addLabel:'Add another payment',
-       summary:it=>it.q3bRel||'', fields:[
-        T('q3bRel','Relative',6), T('q3bAddr','Address',6),
-        T('q3bCity','City',4), ST('q3bState','State',2), T('q3bZip','ZIP',2),
-        T('q3bDates','Dates of payment',3), M('q3bAmt','Amount of payment',3),
-        M('q3bBal','Balance due',3), T('q3bRelation','Relation',3)
-     ]}]},
+      {t:'block', l:`From January 1 of ${SOFA_Y} until the date you file`, showIf:IFYES('sofa4'), fields:[
+        CKS('s4aSrcD','Debtor 1 — sources (check all that apply)',
+          ['Wages, commissions, bonuses, tips','Operating a business'],7),
+        M('s4aAmtD','Debtor 1 — gross income',5),
+        CKS('s4aSrcJ','Debtor 2 — sources (check all that apply)',
+          ['Wages, commissions, bonuses, tips','Operating a business'],7,{showIf:JOINT}),
+        M('s4aAmtJ','Debtor 2 — gross income',5,{showIf:JOINT})
+      ]},
+      {t:'block', l:`Last calendar year — January 1 to December 31, ${SOFA_Y-1}`, showIf:IFYES('sofa4'), fields:[
+        CKS('s4bSrcD','Debtor 1 — sources (check all that apply)',
+          ['Wages, commissions, bonuses, tips','Operating a business'],7),
+        M('s4bAmtD','Debtor 1 — gross income',5),
+        CKS('s4bSrcJ','Debtor 2 — sources (check all that apply)',
+          ['Wages, commissions, bonuses, tips','Operating a business'],7,{showIf:JOINT}),
+        M('s4bAmtJ','Debtor 2 — gross income',5,{showIf:JOINT})
+      ]},
+      {t:'block', l:`The calendar year before that — January 1 to December 31, ${SOFA_Y-2}`, showIf:IFYES('sofa4'), fields:[
+        CKS('s4cSrcD','Debtor 1 — sources (check all that apply)',
+          ['Wages, commissions, bonuses, tips','Operating a business'],7),
+        M('s4cAmtD','Debtor 1 — gross income',5),
+        CKS('s4cSrcJ','Debtor 2 — sources (check all that apply)',
+          ['Wages, commissions, bonuses, tips','Operating a business'],7,{showIf:JOINT}),
+        M('s4cAmtJ','Debtor 2 — gross income',5,{showIf:JOINT})
+      ]}
+    ]},
 
-    {title:'Question 4A — Lawsuits in the last 12 months', none:'q4aNone', noneLabel:'None',
-     note:'All lawsuits you have been a party to within the last 12 months — suits against you as well as suits you have filed.',
-     fields:[{t:'rep', id:'q4a', l:'Lawsuit', min:1, addLabel:'Add another lawsuit',
-       summary:it=>it.q4aCaption||'', fields:[
-        T('q4aCaption','Caption of suit',8), T('q4aCase','Case No.',4),
-        T('q4aNature','Nature of proceeding',6), T('q4aCourt','Court location',6),
-        TA('q4aStatus','Status or disposition',12)
-     ]}]},
-
-    {title:'Question 4B — Property attached, garnished or seized in the last 12 months',
-     none:'q4bNone', noneLabel:'None',
-     fields:[{t:'rep', id:'q4b', l:'Seizure', min:1, addLabel:'Add another item',
-       summary:it=>it.q4bCred||'', fields:[
-        T('q4bCred','Name of creditor',6), T('q4bAddr','Address',6),
-        T('q4bCity','City',4), ST('q4bState','State',2), T('q4bZip','ZIP',2),
-        T('q4bDate','Date of garnishment or seizure',4),
-        TA('q4bDesc','Describe and value what was taken',12)
-     ]}]},
-
-    {title:'Question 5 — Repossessions, foreclosure sales and returns in the last 12 months',
-     none:'q5None', noneLabel:'None',
-     fields:[{t:'rep', id:'q5', l:'Repossession', min:1, addLabel:'Add another item',
-       summary:it=>it.q5Cred||'', fields:[
-        T('q5Cred','Name of creditor',6), T('q5Addr','Address',6),
-        T('q5City','City',4), ST('q5State','State',2), T('q5Zip','ZIP',2),
-        T('q5Date','Date of repossession or foreclosure',4),
-        TA('q5Desc','Describe and value what was taken',12)
-     ]}]}
+    {title:'Part 2 · Question 5 — Other income',
+     note:'Include income regardless of whether it is taxable. Examples: alimony; child support; Social Security; unemployment; other public benefit payments; pensions; rental income; interest; dividends; money collected from lawsuits; royalties; gambling and lottery winnings. <b>Do not include income already listed in Question 4.</b> List each source separately.',
+     fields:[
+      SOFA_Q('sofa5','Did you receive any other income during this year or the two previous calendar years?'),
+      {t:'rep', id:'sofa5List', l:'Source of income', min:1, addLabel:'Add another source',
+       showIf:IFYES('sofa5'),
+       summary:it=>it.s5Desc||'', fields:[
+        SEL('s5Period','Which period?',
+          ['', `January 1 of ${SOFA_Y} until you file`, `Last calendar year (${SOFA_Y-1})`,
+           `The calendar year before that (${SOFA_Y-2})`],5),
+        SEL('s5Who','Whose income?',['','Debtor 1','Debtor 2'],3),
+        T('s5Desc','Describe the source',8),
+        M('s5Amt','Gross income from this source',4)
+      ]}
+    ]}
   ]
 });
 
+/* ---------- SOFA 2 : Parts 3-4, questions 6-12 ---------- */
 STEPS.push({
-  id:'affairs2', title:'Your Financial Affairs (6–12)', eyebrow:'Statement of Financial Affairs',
+  id:'affairs2', title:'Financial Affairs — Payments & Lawsuits',
+  eyebrow:'Statement of Financial Affairs · Parts 3–4',
+  intro:'Payments you made in the months before filing, and any legal action taken against you or your property.',
   sections:[
-    {title:'Question 6A — Assignments of property for the benefit of creditors within 120 days',
-     none:'q6aNone', noneLabel:'None',
+    {title:'Part 3 · Question 6 — Certain payments you made before filing',
+     note:'<b>Consumer debts</b> are defined in 11 U.S.C. &sect; 101(8) as "incurred by an individual primarily for a personal, family, or household purpose."',
      fields:[
-      T('q6aCred','Name of creditor',6), T('q6aAddr','Address',6),
-      T('q6aCity','City',4), ST('q6aState','State',2), T('q6aZip','ZIP',2),
-      T('q6aDate','Date of assignment',4), TA('q6aTerms','Terms of assignment',12)
-     ]},
+      RAD('sofa6Consumer','Are either Debtor 1’s or Debtor 2’s debts primarily consumer debts?',
+        ['Yes — primarily consumer debts','No — neither has primarily consumer debts'],12,{rerender:true}),
 
-    {title:'Question 6B — Property held by a custodian, receiver, pawn broker or court-appointed official in the past 12 months',
-     none:'q6bNone', noneLabel:'None',
+      SOFA_Q('sofa6Con','During the 90 days before you filed for bankruptcy, did you pay any creditor a total of $600 or more?',
+        {showIf:d=>d.sofa6Consumer==='Yes — primarily consumer debts'}),
+      SOFA_Q('sofa6Non','During the 90 days before you filed for bankruptcy, did you pay any creditor a total of $8,575 or more?',
+        {showIf:d=>d.sofa6Consumer==='No — neither has primarily consumer debts',
+         hint:'This figure is adjusted every 3 years; $8,575 applies to cases filed on or after 04/01/2025.'}),
+
+      NOTE('List each creditor you paid that total, and the total amount you paid them. <b>Do not include</b> payments for domestic support obligations such as child support and alimony, and do not include payments to an attorney for this bankruptcy case.','info',
+        {showIf:d=>d.sofa6Con==='Yes'||d.sofa6Non==='Yes'}),
+      {t:'rep', id:'sofa6List', l:'Creditor paid', min:1, addLabel:'Add another creditor',
+       showIf:d=>d.sofa6Con==='Yes'||d.sofa6Non==='Yes',
+       summary:it=>it.s6Name||'', fields:[
+        ...SOFA_ADDR('s6',"Creditor's name"),
+        T('s6Dates','Dates of payment',4),
+        M('s6Paid','Total amount paid',4), M('s6Owe','Amount you still owe',4),
+        RAD('s6For','Was this payment for…',
+          ['Mortgage','Car','Credit card','Loan repayment','Suppliers or vendors','Other'],12),
+        T('s6ForTypeOther','Other — describe',5,{showIf:(d,it)=>it.s6For==='Other'})
+      ]}
+    ]},
+
+    {title:'Part 3 · Question 7 — Payments to an insider', note:INSIDER_NOTE, fields:[
+      SOFA_Q('sofa7','Within 1 year before you filed for bankruptcy, did you make a payment on a debt you owed anyone who was an insider?'),
+      {t:'rep', id:'sofa7List', l:'Payment to an insider', min:1, addLabel:'Add another payment',
+       showIf:IFYES('sofa7'),
+       summary:it=>it.s7Name||'', fields:[
+        ...SOFA_ADDR('s7',"Insider's name"),
+        T('s7Dates','Dates of payment',4),
+        M('s7Paid','Total amount paid',4), M('s7Owe','Amount you still owe',4),
+        TA('s7Reason','Reason for this payment',12)
+      ]}
+    ]},
+
+    {title:'Part 3 · Question 8 — Payments that benefited an insider',
+     note:'Include payments on debts guaranteed or cosigned by an insider.',
      fields:[
-      T('q6bName','Name of custodian',6), T('q6bAddr','Address',6),
-      T('q6bCity','City',4), ST('q6bState','State',2), T('q6bZip','ZIP',2),
-      T('q6bCase','Case title and number, if any',6), T('q6bDate','Date',3),
-      TA('q6bDesc','Description and value of property',12)
-     ]},
+      SOFA_Q('sofa8','Within 1 year before you filed for bankruptcy, did you make any payments or transfer any property on account of a debt that benefited an insider?'),
+      {t:'rep', id:'sofa8List', l:'Payment benefiting an insider', min:1, addLabel:'Add another payment',
+       showIf:IFYES('sofa8'),
+       summary:it=>it.s8Name||'', fields:[
+        ...SOFA_ADDR('s8',"Insider's name"),
+        T('s8Dates','Dates of payment',4),
+        M('s8Paid','Total amount paid',4), M('s8Owe','Amount you still owe',4),
+        TA('s8Reason','Reason for this payment — include the creditor’s name',12)
+      ]}
+    ]},
 
-    {title:'Question 7 — Gifts or charitable contributions in the past 12 months',
-     none:'q7None', noneLabel:'None',
-     note:'Do not list usual gifts to family members unless over $200, or charitable contributions less than $100.',
-     fields:[{t:'rep', id:'q7', l:'Gift', min:1, addLabel:'Add another gift',
-       summary:it=>it.q7Name||'', fields:[
-        T('q7Name','Name of recipient',6), T('q7Addr','Address',6),
-        T('q7City','City',4), ST('q7State','State',2), T('q7Zip','ZIP',2),
-        T('q7Rel','Relationship to you',4), T('q7Date','Date of gift',3),
-        TA('q7Desc','Description and value of gift',12)
-     ]}]},
-
-    {title:'Question 8 — Losses from fire, theft, gambling or other casualty',
-     none:'q8None', noneLabel:'None',
-     note:'Within the last 12 months, or immediately after filing this case.',
+    {title:'Part 4 · Question 9 — Lawsuits and other proceedings',
+     note:'List all such matters, including personal injury cases, small claims actions, divorces, collection suits, paternity actions, support or custody modifications, and contract disputes.',
      fields:[
-      TA('q8Desc','Description and value of property',12),
-      TA('q8Circ','Description of circumstances resulting in loss — and was it covered by insurance?',12),
-      T('q8Date','Date of loss',3)
-     ]},
+      SOFA_Q('sofa9','Within 1 year before you filed for bankruptcy, were you a party in any lawsuit, court action, or administrative proceeding?'),
+      {t:'rep', id:'sofa9List', l:'Case', min:1, addLabel:'Add another case',
+       showIf:IFYES('sofa9'),
+       summary:it=>it.s9Title||'', fields:[
+        T('s9Title','Case title',6), T('s9Number','Case number',6),
+        TA('s9Nature','Nature of the case',12),
+        T('s9Court','Court or agency name',6), T('s9Addr','Number and street',6),
+        T('s9City','City',4), ST('s9State','State',2), T('s9Zip','ZIP Code',2),
+        RAD('s9Status','Status of the case',['Pending','On appeal','Concluded'],12)
+      ]}
+    ]},
 
-    {title:'Question 9 — Payments for debt counseling or bankruptcy in the past 12 months',
-     none:'q9None', noneLabel:'None',
-     note:'All payments you made, or any property you transferred, to any person including attorneys.',
-     fields:[
-      T('q9Payee','Name of payee',6), T('q9Addr','Address',6),
-      T('q9City','City',4), ST('q9State','State',2), T('q9Zip','ZIP',2),
-      M('q9Amt','Amount paid',3), T('q9Date','Date paid',3),
-      T('q9Who','Name of person who paid, if not you',6)
-     ]},
+    {title:'Part 4 · Question 10 — Repossessions, foreclosures and seizures', fields:[
+      SOFA_Q('sofa10','Within 1 year before you filed for bankruptcy, was any of your property repossessed, foreclosed, garnished, attached, seized, or levied?'),
+      {t:'rep', id:'sofa10List', l:'Property', min:1, addLabel:'Add another item',
+       showIf:IFYES('sofa10'),
+       summary:it=>it.s10Name||'', fields:[
+        ...SOFA_ADDR('s10',"Creditor's name"),
+        TA('s10Desc','Describe the property',12),
+        T('s10Date','Date',3), M('s10Value','Value of the property',4),
+        CKS('s10What','Explain what happened',
+          ['Property was repossessed','Property was foreclosed','Property was garnished',
+           'Property was attached, seized, or levied'],12)
+      ]}
+    ]},
 
-    {title:'Question 10 — Property transferred absolutely or as security within the past 2 years',
-     none:'q10None', noneLabel:'None',
-     fields:[{t:'rep', id:'q10', l:'Transfer', min:1, addLabel:'Add another transfer',
-       summary:it=>it.q10Name||'', fields:[
-        T('q10Name','Name of transferee',6), T('q10Addr','Address',6),
-        T('q10City','City',4), ST('q10State','State',2), T('q10Zip','ZIP',2),
-        T('q10Rel','Relationship to you',4), T('q10Date','Date',3),
-        TA('q10Desc','Description and value of property',12)
-     ]}]},
+    {title:'Part 4 · Question 11 — Setoffs', fields:[
+      SOFA_Q('sofa11','Within 90 days before you filed for bankruptcy, did any creditor, including a bank or financial institution, set off any amounts from your accounts or refuse to make a payment because you owed a debt?'),
+      {t:'rep', id:'sofa11List', l:'Setoff', min:1, addLabel:'Add another setoff',
+       showIf:IFYES('sofa11'),
+       summary:it=>it.s11Name||'', fields:[
+        ...SOFA_ADDR('s11',"Creditor's name"),
+        TA('s11Action','Describe the action the creditor took',12),
+        T('s11Date','Date action was taken',3), M('s11Amt','Amount',3),
+        T('s11Acct','Last 4 digits of account number',3,{ph:'XXXX'})
+      ]}
+    ]},
 
-    {title:'Question 11 — Financial accounts closed, sold or transferred in the past 12 months',
-     none:'q11None', noneLabel:'None',
-     fields:[{t:'rep', id:'q11', l:'Account', min:1, addLabel:'Add another account',
-       summary:it=>it.q11Bank||'', fields:[
-        T('q11Bank','Name of bank',6), T('q11Addr','Address',6),
-        T('q11City','City',4), ST('q11State','State',2), T('q11Zip','ZIP',2),
-        RAD('q11Type','Type of account',['Checking','Savings','Other'],6),
-        T('q11TypeOther','Other — describe',3,{showIf:(d,it)=>it.q11Type==='Other'}),
-        T('q11Num','Account number',4), T('q11Closed','Date of closing',3),
-        M('q11Bal','Final balance',3)
-     ]}]},
-
-    {title:'Question 12 — Safe deposit boxes or depositories in the past 12 months',
-     none:'q12None', noneLabel:'None',
-     fields:[
-      T('q12Bank','Name of bank',6), T('q12Addr','Address',6),
-      T('q12City','City',4), ST('q12State','State',2), T('q12Zip','ZIP',2),
-      TA('q12Contents','Description of contents',12),
-      T('q12Surrender','Date of surrender, if any',3),
-      T('q12Access','Name and address of person with access',8)
-     ]}
+    {title:'Part 4 · Question 12 — Property in the hands of an official', fields:[
+      SOFA_Q('sofa12','Within 1 year before you filed for bankruptcy, was any of your property in the possession of an assignee for the benefit of creditors, a court-appointed receiver, a custodian, or another official?'),
+      TA('sofa12X','If yes, tell us about it',12,{showIf:IFYES('sofa12')})
+    ]}
   ]
 });
 
+/* ---------- SOFA 3 : Parts 5-7, questions 13-19 ---------- */
 STEPS.push({
-  id:'affairs3', title:'Your Financial Affairs (13–17)', eyebrow:'Statement of Financial Affairs',
+  id:'affairs3', title:'Financial Affairs — Gifts & Transfers',
+  eyebrow:'Statement of Financial Affairs · Parts 5–7',
+  intro:'Gifts you gave, property you lost, and anything you sold, transferred or paid out in the years before filing.',
   sections:[
-    {title:'Question 13 — Setoffs by any creditor in the past 90 days',
-     none:'q13None', noneLabel:'None',
-     note:'Setoffs made by any creditor, including a bank, against a debt or deposit.',
-     fields:[
-      T('q13Cred','Name of creditor',6), T('q13Addr','Address',6),
-      T('q13City','City',4), ST('q13State','State',2), T('q13Zip','ZIP',2),
-      T('q13Date','Date of setoff',3), M('q13Amt','Amount of setoff',3)
-     ]},
+    {title:'Part 5 · Question 13 — Gifts', fields:[
+      SOFA_Q('sofa13','Within 2 years before you filed for bankruptcy, did you give any gifts with a total value of more than $600 per person?'),
+      {t:'rep', id:'sofa13List', l:'Gift', min:1, addLabel:'Add another gift',
+       showIf:IFYES('sofa13'),
+       summary:it=>it.s13Name||'', fields:[
+        ...SOFA_ADDR('s13','Person to whom you gave the gift'),
+        T('s13Rel','That person’s relationship to you',4),
+        TA('s13Desc','Describe the gifts',12),
+        T('s13Date','Dates you gave the gifts',3), M('s13Value','Value',3)
+      ]}
+    ]},
 
-    {title:'Question 14 — Property owned by another person that you hold or control',
-     none:'q14None', noneLabel:'None',
-     fields:[
-      T('q14Owner','Name of owner',6), T('q14Addr','Address',6),
-      T('q14City','City',4), ST('q14State','State',2), T('q14Zip','ZIP',2),
-      TA('q14Desc','Description and value of property',12),
-      T('q14Loc','Location of property',6)
-     ]},
+    {title:'Part 5 · Question 14 — Charitable contributions', fields:[
+      SOFA_Q('sofa14','Within 2 years before you filed for bankruptcy, did you give any gifts or contributions with a total value of more than $600 to any charity?'),
+      {t:'rep', id:'sofa14List', l:'Contribution', min:1, addLabel:'Add another contribution',
+       showIf:IFYES('sofa14'),
+       summary:it=>it.s14Name||'', fields:[
+        ...SOFA_ADDR('s14','Charity’s name'),
+        TA('s14Desc','Describe what you contributed',12),
+        T('s14Date','Dates you contributed',3), M('s14Value','Value',3)
+      ]}
+    ]},
 
-    {title:'Question 15 — Prior addresses in the last 3 years', none:'q15None', noneLabel:'None',
-     fields:[{t:'rep', id:'q15', l:'Prior address', min:1, addLabel:'Add another address',
-       summary:it=>it.q15Addr||'', fields:[
-        T('q15Addr','Address',6), T('q15City','City',3), ST('q15State','State',1), T('q15Zip','ZIP',2),
-        T('q15Dates','Dates (from – to)',4), T('q15Names','Names used',5)
-     ]}]},
+    {title:'Part 6 · Question 15 — Losses', fields:[
+      SOFA_Q('sofa15','Within 1 year before you filed for bankruptcy or since you filed, did you lose anything because of theft, fire, other disaster, or gambling?'),
+      {t:'rep', id:'sofa15List', l:'Loss', min:1, addLabel:'Add another loss',
+       showIf:IFYES('sofa15'),
+       summary:it=>it.s15Desc||'', fields:[
+        TA('s15Desc','Describe the property you lost and how the loss occurred',12),
+        TA('s15Ins','Describe any insurance coverage for the loss — include the amount insurance has paid, and list any pending insurance claim',12),
+        T('s15Date','Date of your loss',3), M('s15Value','Value of property lost',3)
+      ]}
+    ]},
 
-    {title:'Question 16 — Community property states', none:'q16None', noneLabel:'None',
-     note:'If you have ever lived in any of these community property states within the past 8 years, list your spouse or former spouse and the date you lived in the state.',
+    {title:'Part 7 · Question 16 — Payments related to bankruptcy',
+     note:'Include any attorneys, bankruptcy petition preparers, or credit counseling agencies for services required in your bankruptcy.',
      fields:[
-      CKS('q16States','States lived in',
-        ['Alaska','Arizona','California','Idaho','Louisiana','Nevada','New Mexico','Puerto Rico','Texas','Washington','Wisconsin'],12),
-      T('q16Spouse','Name of spouse or former spouse',6), T('q16Date','Date',3)
-     ]},
+      SOFA_Q('sofa16','Within 1 year before you filed for bankruptcy, did you or anyone else acting on your behalf pay or transfer any property to anyone you consulted about seeking bankruptcy or preparing a bankruptcy petition?'),
+      {t:'rep', id:'sofa16List', l:'Payment', min:1, addLabel:'Add another payment',
+       showIf:IFYES('sofa16'),
+       summary:it=>it.s16Name||'', fields:[
+        ...SOFA_ADDR('s16','Person who was paid'),
+        T('s16Email','Email or website address',6),
+        T('s16Payer','Person who made the payment, if not you',6),
+        TA('s16Desc','Description and value of any property transferred',12),
+        T('s16Date','Date payment or transfer was made',3), M('s16Amt','Amount of payment',3)
+      ]}
+    ]},
 
-    {title:'Question 17 — Environmental law notices', none:'q17None', noneLabel:'None',
-     note:'Name and address of every site where you may have received notice that you were in violation of an environmental law, or any notices regarding hazardous materials.',
+    {title:'Part 7 · Question 17 — Payments to anyone who promised to help with creditors',
+     note:'Do not include any payment or transfer already listed in Question 16.',
      fields:[
-      T('q17Name','Name',6), T('q17Addr','Address',6),
-      T('q17City','City',4), ST('q17State','State',2), T('q17Zip','ZIP',2),
-      T('q17Date','Date of notice',3), T('q17Type','Type of notice',4),
-      T('q17Agency','Government agency',5)
-     ]}
+      SOFA_Q('sofa17','Within 1 year before you filed for bankruptcy, did you or anyone else acting on your behalf pay or transfer any property to anyone who promised to help you deal with your creditors or to make payments to your creditors?'),
+      {t:'rep', id:'sofa17List', l:'Payment', min:1, addLabel:'Add another payment',
+       showIf:IFYES('sofa17'),
+       summary:it=>it.s17Name||'', fields:[
+        ...SOFA_ADDR('s17','Person who was paid'),
+        TA('s17Desc','Description and value of any property transferred',12),
+        T('s17Date','Date payment or transfer was made',3), M('s17Amt','Amount of payment',3)
+      ]}
+    ]},
+
+    {title:'Part 7 · Question 18 — Property you sold, traded or transferred',
+     note:'Include both outright transfers and transfers made as security (such as the granting of a security interest or mortgage on your property). <b>Do not include</b> gifts and transfers already listed on this statement.',
+     fields:[
+      SOFA_Q('sofa18','Within 2 years before you filed for bankruptcy, did you sell, trade, or otherwise transfer any property to anyone, other than property transferred in the ordinary course of your business or financial affairs?'),
+      {t:'rep', id:'sofa18List', l:'Transfer', min:1, addLabel:'Add another transfer',
+       showIf:IFYES('sofa18'),
+       summary:it=>it.s18Name||'', fields:[
+        ...SOFA_ADDR('s18','Person who received the transfer'),
+        T('s18Rel','That person’s relationship to you',4),
+        TA('s18Desc','Description and value of property transferred',12),
+        TA('s18Exchange','Describe any property or payments received, or debts paid in exchange',12),
+        T('s18Date','Date transfer was made',3)
+      ]}
+    ]},
+
+    {title:'Part 7 · Question 19 — Self-settled trusts',
+     note:'These are often called <i>asset-protection devices</i>.',
+     fields:[
+      SOFA_Q('sofa19','Within 10 years before you filed for bankruptcy, did you transfer any property to a self-settled trust or similar device of which you are a beneficiary?'),
+      T('sofa19Trust','Name of trust',6,{showIf:IFYES('sofa19')}),
+      TA('sofa19Desc','Description and value of the property transferred',12,{showIf:IFYES('sofa19')}),
+      T('sofa19Date','Date transfer was made',3,{showIf:IFYES('sofa19')})
+    ]}
+  ]
+});
+
+/* ---------- SOFA 4 : Parts 8-11 + Part 12, questions 20-28 ---------- */
+const ENV_DEFS =
+  '<b>Environmental law</b> means any federal, state, or local statute or regulation concerning pollution, '+
+  'contamination, releases of hazardous or toxic substances, wastes, or material into the air, land, soil, '+
+  'surface water, groundwater, or other medium, including statutes or regulations controlling the cleanup of '+
+  'these substances, wastes, or material.<br><br>'+
+  '<b>Site</b> means any location, facility, or property as defined under any environmental law, whether you '+
+  'now own, operate, or utilize it or used to own, operate, or utilize it, including disposal sites.<br><br>'+
+  '<b>Hazardous material</b> means anything an environmental law defines as a hazardous waste, hazardous '+
+  'substance, toxic substance, hazardous material, pollutant, contaminant, or similar term.<br><br>'+
+  'Report all notices, releases, and proceedings that you know about, <b>regardless of when they occurred</b>.';
+
+STEPS.push({
+  id:'affairs4', title:'Financial Affairs — Accounts & Business',
+  eyebrow:'Statement of Financial Affairs · Parts 8–12',
+  intro:'Accounts you closed, places you store things, property you hold for other people, and any business you have been connected to.',
+  sections:[
+    {title:'Part 8 · Question 20 — Closed financial accounts',
+     note:'Include checking, savings, money market, or other financial accounts; certificates of deposit; shares in banks, credit unions, brokerage houses, pension funds, cooperatives, associations, and other financial institutions.',
+     fields:[
+      SOFA_Q('sofa20','Within 1 year before you filed for bankruptcy, were any financial accounts or instruments held in your name, or for your benefit, closed, sold, moved, or transferred?'),
+      {t:'rep', id:'sofa20List', l:'Account', min:1, addLabel:'Add another account',
+       showIf:IFYES('sofa20'),
+       summary:it=>it.s20Name||'', fields:[
+        ...SOFA_ADDR('s20','Name of financial institution'),
+        T('s20Acct','Last 4 digits of account number',3,{ph:'XXXX'}),
+        RAD('s20Type','Type of account or instrument',
+          ['Checking','Savings','Money market','Brokerage','Other'],12),
+        T('s20TypeOther','Other — describe',5,{showIf:(d,it)=>it.s20Type==='Other'}),
+        T('s20Date','Date account was closed, sold, moved, or transferred',4),
+        M('s20Bal','Last balance before closing or transfer',4)
+      ]}
+    ]},
+
+    {title:'Part 8 · Question 21 — Safe deposit boxes', fields:[
+      SOFA_Q('sofa21','Do you now have, or did you have within 1 year before you filed for bankruptcy, any safe deposit box or other depository for securities, cash, or other valuables?'),
+      {t:'rep', id:'sofa21List', l:'Safe deposit box', min:1, addLabel:'Add another box',
+       showIf:IFYES('sofa21'),
+       summary:it=>it.s21Name||'', fields:[
+        ...SOFA_ADDR('s21','Name of financial institution'),
+        {t:'block', l:'Who else had access to it?', fields:[
+          T('s21AccName','Name',6), T('s21AccAddr','Number and street',6),
+          T('s21AccCity','City',4), ST('s21AccState','State',2), T('s21AccZip','ZIP Code',2)
+        ]},
+        TA('s21Contents','Describe the contents',12),
+        YN('s21Still','Do you still have it?',6)
+      ]}
+    ]},
+
+    {title:'Part 8 · Question 22 — Storage units', fields:[
+      SOFA_Q('sofa22','Have you stored property in a storage unit or place other than your home within 1 year before you filed for bankruptcy?'),
+      {t:'rep', id:'sofa22List', l:'Storage unit', min:1, addLabel:'Add another unit',
+       showIf:IFYES('sofa22'),
+       summary:it=>it.s22Name||'', fields:[
+        ...SOFA_ADDR('s22','Name of storage facility'),
+        {t:'block', l:'Who else has or had access to it?', fields:[
+          T('s22AccName','Name',6), T('s22AccAddr','Number and street',6),
+          T('s22AccCity','City',4), ST('s22AccState','State',2), T('s22AccZip','ZIP Code',2)
+        ]},
+        TA('s22Contents','Describe the contents',12),
+        YN('s22Still','Do you still have it?',6)
+      ]}
+    ]},
+
+    {title:'Part 9 · Question 23 — Property you hold for someone else',
+     note:'Include any property you borrowed from, are storing for, or hold in trust for someone.',
+     fields:[
+      SOFA_Q('sofa23','Do you hold or control any property that someone else owns?'),
+      {t:'rep', id:'sofa23List', l:'Property', min:1, addLabel:'Add another item',
+       showIf:IFYES('sofa23'),
+       summary:it=>it.s23Name||'', fields:[
+        ...SOFA_ADDR('s23','Owner’s name'),
+        {t:'block', l:'Where is the property?', fields:[
+          T('s23LocAddr','Number and street',6),
+          T('s23LocCity','City',4), ST('s23LocState','State',2), T('s23LocZip','ZIP Code',2)
+        ]},
+        TA('s23Desc','Describe the property',12),
+        M('s23Value','Value',3)
+      ]}
+    ]},
+
+    {title:'Part 10 · Environmental information', note:ENV_DEFS, fields:[
+      SOFA_Q('sofa24','Question 24 — Has any governmental unit notified you that you may be liable or potentially liable under or in violation of an environmental law?'),
+      {t:'rep', id:'sofa24List', l:'Notice', min:1, addLabel:'Add another notice',
+       showIf:IFYES('sofa24'),
+       summary:it=>it.s24Name||'', fields:[
+        ...SOFA_ADDR('s24','Name of site'),
+        T('s24Unit','Governmental unit',6), T('s24UnitAddr','Number and street',6),
+        T('s24UnitCity','City',4), ST('s24UnitState','State',2), T('s24UnitZip','ZIP Code',2),
+        T('s24Law','Environmental law, if you know it',6),
+        T('s24Date','Date of notice',3)
+      ]},
+
+      SOFA_Q('sofa25','Question 25 — Have you notified any governmental unit of any release of hazardous material?'),
+      {t:'rep', id:'sofa25List', l:'Notice', min:1, addLabel:'Add another notice',
+       showIf:IFYES('sofa25'),
+       summary:it=>it.s25Name||'', fields:[
+        ...SOFA_ADDR('s25','Name of site'),
+        T('s25Unit','Governmental unit',6), T('s25UnitAddr','Number and street',6),
+        T('s25UnitCity','City',4), ST('s25UnitState','State',2), T('s25UnitZip','ZIP Code',2),
+        T('s25Law','Environmental law, if you know it',6),
+        T('s25Date','Date of notice',3)
+      ]},
+
+      SOFA_Q('sofa26','Question 26 — Have you been a party in any judicial or administrative proceeding under any environmental law? Include settlements and orders.'),
+      {t:'rep', id:'sofa26List', l:'Proceeding', min:1, addLabel:'Add another proceeding',
+       showIf:IFYES('sofa26'),
+       summary:it=>it.s26Title||'', fields:[
+        T('s26Title','Case title',6), T('s26Number','Case number',6),
+        T('s26Court','Court or agency name',6), T('s26Addr','Number and street',6),
+        T('s26City','City',4), ST('s26State','State',2), T('s26Zip','ZIP Code',2),
+        TA('s26Nature','Nature of the case',12),
+        RAD('s26Status','Status of the case',['Pending','On appeal','Concluded'],12)
+      ]}
+    ]},
+
+    {title:'Part 11 · Question 27 — Your business connections',
+     note:'This covers the last <b>4 years</b> and includes businesses that have since closed. It overlaps with the business question earlier in this questionnaire — please answer it here too, since the court asks it separately.',
+     fields:[
+      SOFA_Q('sofa27','Within 4 years before you filed for bankruptcy, did you own a business or have any of the following connections to any business?'),
+      CKS('sofa27Kinds','Check all that apply',
+        ['A sole proprietor or self-employed in a trade, profession, or other activity, either full-time or part-time',
+         'A member of a limited liability company (LLC) or limited liability partnership (LLP)',
+         'A partner in a partnership',
+         'An officer, director, or managing executive of a corporation',
+         'An owner of at least 5% of the voting or equity securities of a corporation'],12,
+        {showIf:IFYES('sofa27')}),
+      {t:'rep', id:'sofa27List', l:'Business', min:1, addLabel:'Add another business',
+       showIf:IFYES('sofa27'),
+       summary:it=>it.s27Name||'', fields:[
+        ...SOFA_ADDR('s27','Business name'),
+        TA('s27Nature','Describe the nature of the business',12),
+        T('s27EIN','Employer Identification Number (EIN)',4,
+          {hint:'Do not include a Social Security number or ITIN.'}),
+        T('s27Acct','Name of accountant or bookkeeper',5),
+        T('s27From','Business existed from',3,{hint:'mm/yyyy'}),
+        T('s27To','to',3,{hint:'mm/yyyy'})
+      ]}
+    ]},
+
+    {title:'Part 11 · Question 28 — Financial statements about your business',
+     note:'Include all financial institutions, creditors, or other parties.',
+     fields:[
+      SOFA_Q('sofa28','Within 2 years before you filed for bankruptcy, did you give a financial statement to anyone about your business?'),
+      {t:'rep', id:'sofa28List', l:'Financial statement', min:1, addLabel:'Add another statement',
+       showIf:IFYES('sofa28'),
+       summary:it=>it.s28Name||'', fields:[
+        ...SOFA_ADDR('s28','Name of the person or institution'),
+        T('s28Date','Date issued',3,{hint:'mm/dd/yyyy'})
+      ]}
+    ]},
+
+    {title:'Part 12 · Before you sign', fields:[
+      NOTE('You will sign the Statement of Financial Affairs itself at our office. Signing it declares, <b>under penalty of perjury</b>, that these answers are true and correct. Making a false statement, concealing property, or obtaining money or property by fraud in a bankruptcy case can mean fines of up to $250,000, imprisonment for up to 20 years, or both. 18 U.S.C. &sect;&sect; 152, 1341, 1519 and 3571.','warn'),
+      YN('sofaPreparer','Did you pay, or agree to pay, someone who is not an attorney to help you fill out bankruptcy forms?',12,{rerender:true}),
+      T('sofaPreparerName','If yes — name of that person',6,{showIf:IFYES('sofaPreparer')})
+    ]}
   ]
 });
 
@@ -1596,7 +1908,7 @@ function sumRep(d,key,field){
   return a.reduce((t,o)=>t+num(o&&o[field]),0);
 }
 function sumHG(d){
-  let t=0; HG_ITEMS.forEach(it=>{ if(d['hg_'+it[0]+'_on']) t+=num(d['hg_'+it[0]+'_v']); }); return t;
+  let t=0; HG_ITEMS.forEach(it=>{ t+=num(d['hg_'+it[0]+'_v']); }); return t;
 }
 function ppGrandTotal(d){
   let t=0;
@@ -1619,6 +1931,8 @@ function expTotal(d,sfx){
   let t=0;
   EXP_ROWS.forEach(r=>{ if(r[0].startsWith('__')) return; t+=num(d[r[0]+sfx]); });
   t+=num(d['expRETax'+sfx])+num(d['expHomeIns'+sfx]);
+  const n=expOtherCount(d);
+  for(let i=1;i<=n;i++) t+=num(d['expOther'+i+sfx]);
   return t;
 }
 
@@ -1740,6 +2054,7 @@ function renderField(f,ctx){
       return `<div style="grid-column:span 12"><div class="block"><div class="bt">${esc(f.l)}</div>${renderFields(f.fields,ctx)}</div></div>`;
     }
 
+    case 'addrow': return `<div class="rep-add" style="grid-column:span 12;margin:2px 0 6px"><button type="button" class="btn sm" data-act="addrow" data-target="${esc(f.target)}">+ ${esc(f.l)}</button></div>`;
     case 'rep':   return `<div style="grid-column:span 12">${renderRepeater(f,ctx)}</div>`;
     case 'hg':    return `<div style="grid-column:span 12">${renderHG(f,ctx)}</div>`;
     case 'docs':  return `<div style="grid-column:span 12">${renderDocs(f,ctx)}</div>`;
@@ -1812,19 +2127,22 @@ function renderRepeater(f,ctx){
 function renderHG(f,ctx){
   let out='<div class="hg">';
   f.items.forEach(it=>{
-    const on = !!S.data['hg_'+it[0]+'_on'];
     const extra = it[2]
       ? `<input type="text" data-p="hg_${it[0]}_x" value="${esc(S.data['hg_'+it[0]+'_x']||'')}" placeholder="${it[2]==='qty'?'qty':'describe'}">`
       : `<span></span>`;
     out+=`<div class="hg-row">
-      <input type="checkbox" data-p="hg_${it[0]}_on" data-bool="1"${on?' checked':''} aria-label="${esc(it[1])}">
       <span class="hl">${esc(it[1])}</span>
       ${extra}
-      <div class="money-wrap"><input type="text" inputmode="decimal" data-p="hg_${it[0]}_v" data-money="1" value="${esc(S.data['hg_'+it[0]+'_v']||'')}" aria-label="Used value"></div>
+      <div class="money-wrap"><input type="text" inputmode="decimal" data-p="hg_${it[0]}_v" data-money="1" value="${esc(S.data['hg_'+it[0]+'_v']||'')}" aria-label="${esc(it[1])} — used value"></div>
     </div>`;
   });
   return out+'</div>';
 }
+/* an item counts as owned if a value or a description was typed for it */
+const hgHas = key => {
+  const v=S.data['hg_'+key+'_v'], x=S.data['hg_'+key+'_x'];
+  return (typeof v==='string' && v.trim()!=='') || (typeof x==='string' && x.trim()!=='');
+};
 
 /* ---------- documents checklist ---------- */
 function renderDocs(f,ctx){
@@ -1909,7 +2227,20 @@ function renderSection(sec){
   return out+'</div>';
 }
 
-function renderStep(){
+/* renderStep(true) = an in-place re-render: the client is still working on this
+   page, so hold the scroll position and put the caret back where it was.
+   renderStep() with no argument = moving to a different page, which goes to top. */
+function renderStep(keepScroll){
+  let keepY=0, keepId=null, keepPath=null, selS=null, selE=null;
+  if(keepScroll){
+    keepY = window.scrollY;
+    const a = document.activeElement;
+    if(a && a!==document.body){
+      keepId   = a.id || null;
+      keepPath = a.getAttribute ? a.getAttribute('data-p') : null;
+      try{ selS=a.selectionStart; selE=a.selectionEnd; }catch(e){}
+    }
+  }
   const vs=visibleSteps();
   if(S.step>=vs.length) S.step=vs.length-1;
   if(S.step<0) S.step=0;
@@ -1925,7 +2256,22 @@ function renderStep(){
   nx.textContent = S.step===vs.length-1 ? 'Done' : 'Next →';
 
   renderNav();
-  window.scrollTo({top:0,behavior:'instant'});
+
+  if(!keepScroll){ window.scrollTo({top:0,behavior:'instant'}); return; }
+
+  window.scrollTo({top:keepY,behavior:'instant'});
+  let el = keepId ? document.getElementById(keepId) : null;
+  if(!el && keepPath){
+    try{ el = document.querySelector('[data-p="'+keepPath.replace(/"/g,'\\"')+'"]'); }catch(e){}
+  }
+  if(el && el.focus){
+    try{
+      el.focus({preventScroll:true});
+      if(selS!=null && typeof el.setSelectionRange==='function') el.setSelectionRange(selS,selE);
+    }catch(e){}
+    /* focus() can still nudge the page on some browsers — put it back */
+    if(window.scrollY!==keepY) window.scrollTo({top:keepY,behavior:'instant'});
+  }
 }
 
 function renderNav(){
@@ -1950,7 +2296,7 @@ function stepKeys(step){
   const keys=[];
   const walk=(fields)=>fields.forEach(f=>{
     if(f.t==='rep'){ keys.push({rep:f.id}); }
-    else if(f.t==='hg'){ f.items.forEach(i=>keys.push('hg_'+i[0]+'_on')); }
+    else if(f.t==='hg'){ f.items.forEach(i=>{ keys.push('hg_'+i[0]+'_v'); keys.push('hg_'+i[0]+'_x'); }); }
     else if(f.t==='docs'){ f.items.forEach(i=>keys.push('doc_'+i[0])); }
     else if(f.t==='stmts'){ f.items.forEach(i=>keys.push('stm_'+i[0])); }
     else if(f.t==='mtx'){ const rows=f.rows||[['ind'],['sp']];
@@ -2043,7 +2389,7 @@ function rvFields(fields,ctx){
   fields.forEach(f=>{
     if(!fieldVisible(f,ctx)) return;
     switch(f.t){
-      case 'h': case 'note': case 'legal': case 'dualhead': break;
+      case 'h': case 'note': case 'legal': case 'dualhead': case 'addrow': break;
       case 'block':
         if(f.showIf && !f.showIf(S.data,ctx.item)) break;
         extra += `<h3>${esc(f.l)}</h3>` + rvFields(f.fields,ctx);
@@ -2059,9 +2405,9 @@ function rvFields(fields,ctx){
       }
       case 'hg': {
         let r='';
-        f.items.forEach(it=>{ if(S.data['hg_'+it[0]+'_on'])
+        f.items.forEach(it=>{ if(hgHas(it[0]))
           r+=rvRow(esc(it[1])+(S.data['hg_'+it[0]+'_x']?' ('+esc(S.data['hg_'+it[0]+'_x'])+')':''), money(num(S.data['hg_'+it[0]+'_v']))); });
-        extra += r?`<table>${r}</table>`:'<p style="font-size:12.5px;color:#8b95a1">No items checked.</p>';
+        extra += r?`<table>${r}</table>`:'<p style="font-size:12.5px;color:#8b95a1">No household goods listed.</p>';
         break;
       }
       case 'docs': {
@@ -2186,7 +2532,7 @@ document.addEventListener('input', ev=>{
     sv(p, el.value);
   }
   markDirty();
-  if(el.getAttribute('data-rr') && !isTextEntry(el)){ renderStep(); return; }
+  if(el.getAttribute('data-rr') && !isTextEntry(el)){ renderStep(true); return; }
   refreshTotals();
   const rh=el.closest('.rep-item')?.querySelector('.rs');
   if(rh) updateRepSummaries();
@@ -2202,7 +2548,7 @@ function isTextEntry(el){
 document.addEventListener('change', ev=>{
   const el=ev.target;
   if(el.getAttribute && el.getAttribute('data-p') && el.getAttribute('data-rr') && isTextEntry(el)){
-    renderStep();
+    renderStep(true);
   }
 });
 
@@ -2242,13 +2588,22 @@ document.addEventListener('click', ev=>{
   if(act==='add'){
     const path=b.getAttribute('data-rep');
     const arr=gv(path)||[]; arr.push({}); sv(path,arr);
-    markDirty(); renderStep();
+    markDirty(); renderStep(true);
     return;
   }
   if(act==='del'){
     const path=b.getAttribute('data-rep'), i=+b.getAttribute('data-i');
     const arr=gv(path)||[]; arr.splice(i,1); sv(path,arr);
-    markDirty(); renderStep();
+    markDirty(); renderStep(true);
+    return;
+  }
+  /* "+ Add another…" for a plain numbered run of rows (other expenses) */
+  if(act==='addrow'){
+    const k=b.getAttribute('data-target');
+    S.data[k] = Math.max(2, +S.data[k] || 2) + 1;
+    syncExpenseRows();
+    delete _stepKeyCache[visibleSteps()[S.step].id];
+    markDirty(); renderStep(true);
     return;
   }
   const go=b.getAttribute('data-goto');
@@ -2302,8 +2657,12 @@ document.getElementById('fileIn').addEventListener('change', e=>{
 document.getElementById('btnPrint').addEventListener('click', ()=>{
   const vs=visibleSteps();
   const i=vs.findIndex(s=>s.id==='review');
-  if(i>=0 && S.step!==i){ S.step=i; renderStep(); }
-  setTimeout(()=>window.print(),150);
+  const needsRender = (i>=0 && S.step!==i) || S.officeView;
+  if(i>=0) S.step=i;
+  S.officeView=false;              /* always print the client's own read-through */
+  if(needsRender || i>=0) renderStep();
+  /* two frames, so the review page is laid out before the dialog opens */
+  requestAnimationFrame(()=>requestAnimationFrame(()=>window.print()));
 });
 
 window.addEventListener('beforeunload', e=>{
@@ -2442,6 +2801,8 @@ function stripAttorney(){
 
     document.getElementById('rbYes').addEventListener('click', ()=>{
       S.data = draft.data || {};
+      migrateData(S.data);
+      syncExpenseRows();
       S.step = 0;
       on = true;
       const cb=document.getElementById('asToggle'); if(cb) cb.checked=true;
@@ -2479,7 +2840,7 @@ function stripAttorney(){
    - dual / mtx: legitimately sparse (nobody has all 43 expense lines)
    - hg / docs / stmts / cks / ck: checklists, blank is a real answer  */
 const AUDIT_SKIP_TYPES = new Set(['h','note','legal','dualhead','dual','dualtotal',
-  'grandtotal','mtx','hg','docs','stmts','cks','ck','review']);
+  'grandtotal','mtx','hg','docs','stmts','cks','ck','review','addrow']);
 
 /* genuinely optional fields — not omissions */
 const AUDIT_OPTIONAL = [
@@ -2640,10 +3001,10 @@ function renderAuditPanel(){
   return out + '</div>';
 }
 /* ============================================================
-   PASSWORD-PROTECTED SAVE FILES
-   The client's answers are encrypted in their own browser before
-   the file is written. An intercepted attachment is useless
-   without the password, which the firm shares by phone.
+   READING PASSWORD-PROTECTED SAVE FILES
+   Saving no longer offers a password — files download as plain
+   .json. This block stays so that any .slq file written by an
+   earlier version of the form can still be opened.
    AES-GCM 256, key derived with PBKDF2-SHA256 (310,000 rounds).
    ============================================================ */
 
@@ -2664,6 +3025,8 @@ async function deriveKey(pass, salt, use){
     {name:'PBKDF2', salt, iterations:KDF_ROUNDS, hash:'SHA-256'},
     base, {name:'AES-GCM', length:256}, false, [use]);
 }
+/* kept alongside decryptPayload so the pair stays readable; nothing calls it
+   while saving is unprotected */
 async function encryptPayload(obj, pass){
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const iv   = crypto.getRandomValues(new Uint8Array(12));
@@ -2731,56 +3094,15 @@ function basePayload(){
    or null if they backed out. Shared by Save and Send. */
 async function buildSaveBlob(){
   const stem = safeName().replace(/\.json$/,'');
-  const plainBlob = () => new Blob([JSON.stringify(basePayload(),null,2)], {type:'application/json'});
-
-  if(!CRYPTO_OK) return {blob:plainBlob(), name:stem+'.json', locked:false};
-
-  const choice = await modal({
-    title:'Protect this file?',
-    body:`<p>This file contains your Social Security number, dates of birth and account numbers.
-          Adding a password means that if it is ever intercepted in transit, it is unreadable
-          without that password.</p>
-          <p><b>Give the password to our office by phone — never in the same message as the file.</b></p>`,
-    buttons:[
-      {label:'Add a password', cls:'gold', value:'pw'},
-      {label:'Continue without one', value:'plain'},
-      {label:'Cancel', value:null}
-    ]
-  });
-  if(choice===null) return null;
-  if(choice==='plain') return {blob:plainBlob(), name:stem+'.json', locked:false};
-
-  const pass = await modal({
-    title:'Choose a password',
-    body:`<p>Write it down before you continue. <b>There is no way to recover this file if the
-          password is lost</b> — not by us, not by anyone.</p>
-          <label for="pw1">Password (at least 8 characters)</label>
-          <input type="password" id="pw1" autocomplete="new-password">
-          <label for="pw2">Type it again</label>
-          <input type="password" id="pw2" autocomplete="new-password">`,
-    buttons:[
-      {label:'Protect the file', cls:'gold', validate:bg=>{
-        const a=bg.querySelector('#pw1').value, b=bg.querySelector('#pw2').value;
-        if(a.length<8) return 'Please use at least 8 characters.';
-        if(a!==b)      return 'The two passwords do not match.';
-        return null;
-      }, value:bg=>bg.querySelector('#pw1').value},
-      {label:'Back', value:null}
-    ]
-  });
-  if(pass===null) return null;
-
-  try{
-    const env = await encryptPayload(basePayload(), pass);
-    return {blob:new Blob([JSON.stringify(env,null,2)],{type:'application/json'}), name:stem+'.slq', locked:true};
-  }catch(err){
-    await modal({title:'Could not protect the file',
-      body:`<p>Something went wrong: ${esc(err.message)}</p>
-            <p>Your answers are safe on screen — try again without a password.</p>`,
-      buttons:[{label:'OK', cls:'gold', value:null}]});
-    return null;
-  }
+  return {
+    blob: new Blob([JSON.stringify(basePayload(),null,2)], {type:'application/json'}),
+    name: stem + '.json',
+    locked: false
+  };
 }
+/* Saving no longer offers a password — it downloads straight away. The
+   decryption side is deliberately kept: any .slq file saved by an earlier
+   version of this form still opens through "Open saved file". */
 
 function downloadBlob(blob, name){
   const a=document.createElement('a');
@@ -2797,6 +3119,127 @@ async function doSave(){
 }
 
 /* ---------- load ---------- */
+/* Carry answers forward when a question changes shape between versions, so a
+   file saved on an older build still opens with nothing lost. Safe to re-run. */
+function migrateData(d){
+  if(!d || typeof d!=='object') return d;
+
+  /* item 18 became a repeater — fold the old single row into the list */
+  if(!Array.isArray(d.pp18)){
+    const had = ['pp18Item','pp18Val','pp18Due'].some(k=>{
+      const v=d[k]; return typeof v==='string' && v.trim()!=='';
+    });
+    if(had){
+      d.pp18 = [{p18Item:d.pp18Item||'', p18Val:d.pp18Val||'', p18Due:d.pp18Due||''}];
+      delete d.pp18Item; delete d.pp18Val; delete d.pp18Due;
+    }
+  }
+
+  /* household goods dropped their tick boxes — a value alone now means "owned",
+     so an old row that was ticked but left blank would otherwise vanish */
+  if(typeof HG_ITEMS!=='undefined'){
+    HG_ITEMS.forEach(it=>{
+      const onKey='hg_'+it[0]+'_on', vKey='hg_'+it[0]+'_v', xKey='hg_'+it[0]+'_x';
+      if(d[onKey]){
+        const blank = !(typeof d[vKey]==='string' && d[vKey].trim()!=='')
+                   && !(typeof d[xKey]==='string' && d[xKey].trim()!=='');
+        if(blank) d[vKey]='0';
+      }
+      delete d[onKey];
+    });
+  }
+
+  /* payroll detail is gone; if net pay was never filled in, fall back to
+     gross minus the deductions that were */
+  if(!(typeof d.payNet_d==='string' && d.payNet_d.trim()!=='') && d.payGross_d){
+    const n = v => { const x=parseFloat(String(v||'').replace(/[^0-9.\-]/g,'')); return isFinite(x)?x:0; };
+    const net = n(d.payGross_d)+n(d.payOvertime_d)
+      - ['dedTax','dedIns','dedMedical','dedUnion','dedRetire','dedSupport','dedOther']
+          .reduce((t,k)=>t+n(d[k+'_d']),0);
+    if(net>0) d.payNet_d = String(net);
+  }
+
+  /* The Statement of Financial Affairs was rebuilt against Official Form 107,
+     so the old Form 7 question numbers (q1a..q17) no longer render. Carry the
+     answers that map one-to-one onto the new questions. Anything not listed
+     below stays untouched in the file — nothing is deleted — but it will not
+     appear on screen and needs a person to re-key it. */
+  if(!d._sofa107){
+    const pick = (src, map) => {
+      const o = {}; let any = false;
+      for(const k in map){
+        const v = src[k];
+        if(v!=null && v!=='' && !(Array.isArray(v) && !v.length)){ o[map[k]] = v; any = true; }
+      }
+      return any ? o : null;
+    };
+    const put = (newId, rows, flag) => {
+      rows = rows.filter(Boolean);
+      if(!rows.length) return;
+      if(Array.isArray(d[newId]) && d[newId].length) return;   /* never clobber */
+      d[newId] = rows;
+      if(flag) d[flag] = 'Yes';
+    };
+    const rep  = id => Array.isArray(d[id]) ? d[id] : [];
+    const A    = (op,np) => ({[op+'Addr']:np+'Addr', [op+'City']:np+'City',
+                              [op+'State']:np+'State', [op+'Zip']:np+'Zip'});
+
+    put('sofa2List',  rep('q15').map(it=>pick(it,{q15Addr:'s2Addr',q15City:'s2City',
+        q15State:'s2State',q15Zip:'s2Zip',q15Dates:'s2From'})), 'sofa2');
+    put('sofa6List',  rep('q3a').map(it=>pick(it,{q3aCred:'s6Name',...A('q3a','s6'),
+        q3aDates:'s6Dates',q3aAmt:'s6Paid',q3aBal:'s6Owe'})), 'sofa6Con');
+    put('sofa7List',  rep('q3b').map(it=>pick(it,{q3bRel:'s7Name',...A('q3b','s7'),
+        q3bDates:'s7Dates',q3bAmt:'s7Paid',q3bBal:'s7Owe',q3bRelation:'s7Reason'})), 'sofa7');
+    put('sofa9List',  rep('q4a').map(it=>pick(it,{q4aCaption:'s9Title',q4aCase:'s9Number',
+        q4aNature:'s9Nature',q4aCourt:'s9Court'})), 'sofa9');
+    put('sofa10List', [...rep('q4b').map(it=>pick(it,{q4bCred:'s10Name',...A('q4b','s10'),
+        q4bDate:'s10Date',q4bDesc:'s10Desc'})),
+                       ...rep('q5').map(it=>pick(it,{q5Cred:'s10Name',...A('q5','s10'),
+        q5Date:'s10Date',q5Desc:'s10Desc'}))], 'sofa10');
+    put('sofa13List', rep('q7').map(it=>pick(it,{q7Name:'s13Name',...A('q7','s13'),
+        q7Rel:'s13Rel',q7Date:'s13Date',q7Desc:'s13Desc'})), 'sofa13');
+    put('sofa18List', rep('q10').map(it=>pick(it,{q10Name:'s18Name',...A('q10','s18'),
+        q10Rel:'s18Rel',q10Date:'s18Date',q10Desc:'s18Desc'})), 'sofa18');
+    put('sofa20List', rep('q11').map(it=>pick(it,{q11Bank:'s20Name',...A('q11','s20'),
+        q11Type:'s20Type',q11TypeOther:'s20TypeOther',q11Num:'s20Acct',
+        q11Closed:'s20Date',q11Bal:'s20Bal'})), 'sofa20');
+
+    /* the old form asked these as a single block rather than a list */
+    put('sofa11List', [pick(d,{q13Cred:'s11Name',...A('q13','s11'),
+        q13Date:'s11Date',q13Amt:'s11Amt'})], 'sofa11');
+    put('sofa15List', [pick(d,{q8Desc:'s15Desc',q8Circ:'s15Ins',q8Date:'s15Date'})], 'sofa15');
+    put('sofa16List', [pick(d,{q9Payee:'s16Name',...A('q9','s16'),
+        q9Amt:'s16Amt',q9Date:'s16Date',q9Who:'s16Payer'})], 'sofa16');
+    put('sofa21List', [pick(d,{q12Bank:'s21Name',...A('q12','s21'),
+        q12Contents:'s21Contents',q12Access:'s21AccName'})], 'sofa21');
+    put('sofa23List', [pick(d,{q14Owner:'s23Name',...A('q14','s23'),
+        q14Desc:'s23Desc',q14Loc:'s23LocAddr'})], 'sofa23');
+    put('sofa24List', [pick(d,{q17Name:'s24Name',...A('q17','s24'),
+        q17Agency:'s24Unit',q17Date:'s24Date',q17Type:'s24Law'})], 'sofa24');
+
+    if(typeof d.q6aCred==='string' && d.q6aCred.trim()!=='' && !d.sofa12){
+      d.sofa12  = 'Yes';
+      d.sofa12X = [d.q6aCred, d.q6aDate, d.q6aTerms].filter(Boolean).join(' — ');
+    }
+    if(Array.isArray(d.q16States) && d.q16States.length && !d.sofa3){
+      d.sofa3      = 'Yes';
+      d.sofa3Spouse = d.q16Spouse || '';
+      d.sofa3Where  = [d.q16States.join(', '), d.q16Date].filter(Boolean).join(' — ');
+    }
+    d._sofa107 = 1;
+  }
+
+  /* keep enough Other-expense rows to show every one that has an answer */
+  let maxOther = 0;
+  Object.keys(d).forEach(k=>{
+    const m = /^expOther(\d+)(_[ds]|Label)?$/.exec(k);
+    if(m && d[k]!=='' && d[k]!=null) maxOther = Math.max(maxOther, +m[1]);
+  });
+  if(maxOther > (+d.expOtherN||0)) d.expOtherN = maxOther;
+
+  return d;
+}
+
 async function applyLoadedText(text, filename){
   let parsed;
   try{ parsed = JSON.parse(text); }
@@ -2844,6 +3287,9 @@ async function applyLoadedText(text, filename){
   }
 
   S.data = (parsed && parsed.data) ? parsed.data : parsed;
+  migrateData(S.data);
+  syncExpenseRows();
+  Object.keys(_stepKeyCache).forEach(k=>delete _stepKeyCache[k]);
   S.step = 0; S.dirty = false;
   document.getElementById('saveDot').className = 'dot saved';
   document.getElementById('saveMsg').textContent = 'Opened ' + (filename||'file');
@@ -2872,7 +3318,7 @@ const OFFICE_ORDER = [
   {title:'10 · Schedule I — Income',                   steps:['income']},
   {title:'11 · Schedule J — Expenses',                 steps:['expenses']},
   {title:'12 · Form 122 — Means test',                 steps:['meanstest']},
-  {title:'13 · Statement of Financial Affairs',        steps:['affairs1','affairs2','affairs3']},
+  {title:'13 · Statement of Financial Affairs',        steps:['affairs1','affairs2','affairs3','affairs4']},
   {title:'14 · Documents & signature',                 steps:['checklist','disclaimer'],
    skipAttorney:true}
 ];
@@ -2892,7 +3338,7 @@ function ovRows(fields, ctx, out, prefix){
   fields.forEach(f=>{
     if(!fieldVisible(f,ctx)) return;
     switch(f.t){
-      case 'h': case 'note': case 'legal': case 'dualhead': case 'review': break;
+      case 'h': case 'note': case 'legal': case 'dualhead': case 'review': case 'addrow': break;
 
       case 'block':
         if(f.showIf && !f.showIf(S.data,ctx.item)) break;
@@ -2911,7 +3357,7 @@ function ovRows(fields, ctx, out, prefix){
       }
       case 'hg': {
         f.items.forEach(it=>{
-          if(!S.data['hg_'+it[0]+'_on']) return;
+          if(!hgHas(it[0])) return;
           const x = S.data['hg_'+it[0]+'_x'];
           out.push({label: it[1] + (x?` (${x})`:''), value: money(num(S.data['hg_'+it[0]+'_v']))});
         });
@@ -3067,7 +3513,7 @@ document.addEventListener('click', ev=>{
   if(t){ S.officeView = t.getAttribute('data-ovmode')==='office'; renderStep(); return; }
 });
 document.addEventListener('change', ev=>{
-  if(ev.target && ev.target.id==='ovBlanks'){ S.ovBlanks = ev.target.checked; renderStep(); }
+  if(ev.target && ev.target.id==='ovBlanks'){ S.ovBlanks = ev.target.checked; renderStep(true); }
 });
 /* ============================================================
    SEND TO THE OFFICE
@@ -3191,7 +3637,11 @@ function renderSendCard(){
         On a computer the file downloads and your email opens.</p>
     </div>
     <button type="button" class="btn gold sc-btn" id="btnSend">Send to the office</button>
-  </div>`;
+  </div>
+  <p class="legal no-print" style="margin-top:10px">
+    Want a copy for your own records? Press <b>Download PDF</b> at the top of the page and
+    choose <b>Save as PDF</b> as the destination.
+  </p>`;
 }
 
 document.addEventListener('click', ev=>{
